@@ -2,6 +2,7 @@
 """Module that defines cat_matrices2D, which
 concatenates two 2D matrices."""
 
+
 def cat_matrices2D(mat1, mat2, axis=0):
     """Concatenate two 2D matrices along the given axis.
     axis=0 → row-wise concatenation
