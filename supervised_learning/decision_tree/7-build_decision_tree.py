@@ -109,21 +109,47 @@ class Leaf(Node):
     """
 
     def __init__(self, value, depth=None):
+        """_summary_
+
+        Args:
+            value (_type_): _description_
+            depth (_type_, optional): _description_. Defaults to None.
+        """
         super().__init__()
         self.value = value
         self.is_leaf = True
         self.depth = depth
 
     def max_depth_below(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         return self.depth
 
     def count_nodes_below(self, only_leaves=False):
+        """_summary_
+
+        Args:
+            only_leaves (bool, optional): _description_. Defaults to False.
+
+        Returns:
+            _type_: _description_
+        """
         return 1
 
     def get_leaves_below(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         return [self]
 
     def update_bounds_below(self):
+        """_summary_
+        """
         pass
 
     def update_indicator(self):
@@ -153,6 +179,14 @@ class Leaf(Node):
         )
 
     def pred(self, x):
+        """_summary_
+
+        Args:
+            x (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         return self.value
 
 
