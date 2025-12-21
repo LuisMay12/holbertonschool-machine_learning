@@ -32,25 +32,47 @@ class Node:
 
     def max_depth_below(self):
         """Return maximum depth below this node."""
-        return max(
-            self.left_child.max_depth_below(),
-            self.right_child.max_depth_below()
+        left_depth = (
+            self.left_child.max_depth_below()
+            if self.left_child is not None
+            else self.depth
         )
+        right_depth = (
+            self.right_child.max_depth_below()
+            if self.right_child is not None
+            else self.depth
+        )
+        return max(left_depth, right_depth)
 
     def count_nodes_below(self, only_leaves=False):
         """Count nodes below this node."""
-        left = self.left_child.count_nodes_below(only_leaves)
-        right = self.right_child.count_nodes_below(only_leaves)
+        left = (
+            self.left_child.count_nodes_below(only_leaves)
+            if self.left_child is not None
+            else 0
+        )
+        right = (
+            self.right_child.count_nodes_below(only_leaves)
+            if self.right_child is not None
+            else 0
+        )
         if only_leaves:
             return left + right
         return 1 + left + right
 
     def get_leaves_below(self):
         """Return all leaves below this node."""
-        return (
+        left_leaves = (
             self.left_child.get_leaves_below()
-            + self.right_child.get_leaves_below()
+            if self.left_child is not None
+            else []
         )
+        right_leaves = (
+            self.right_child.get_leaves_below()
+            if self.right_child is not None
+            else []
+        )
+        return left_leaves + right_leaves
 
     def update_bounds_below(self):
         """Update bounds for all nodes below."""
@@ -59,6 +81,8 @@ class Node:
             self.upper = {0: np.inf}
 
         for child in [self.left_child, self.right_child]:
+            if child is None:
+                continue
             child.lower = dict(self.lower)
             child.upper = dict(self.upper)
 
@@ -68,7 +92,8 @@ class Node:
                 child.upper[self.feature] = self.threshold
 
         for child in [self.left_child, self.right_child]:
-            child.update_bounds_below()
+            if child is not None:
+                child.update_bounds_below()
 
     def update_indicator(self):
         """Create indicator function for this node."""
@@ -95,6 +120,10 @@ class Node:
             np.array([is_large_enough(x), is_small_enough(x)]),
             axis=0
         )
+        
+        for child in [self.left_child, self.right_child]:
+            if child is not None:
+                child.update_indicator()
 
     def pred(self, x):
         """Recursive prediction for one individual."""

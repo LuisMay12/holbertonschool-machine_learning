@@ -146,6 +146,9 @@ class Isolation_Random_Tree:
         Prediction returns the depth of the leaf
         where each individual falls.
         """
+        self.root.update_bounds_below()
+        self.root.update_indicator()
+        
         leaves = self.get_leaves()
         self.predict = lambda X: np.sum(
             np.array([leaf.indicator(X) * leaf.depth for leaf in leaves]),
