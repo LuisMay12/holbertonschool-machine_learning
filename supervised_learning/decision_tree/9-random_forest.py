@@ -35,7 +35,7 @@ class Random_Forest:
         self.seed = seed
         self.numpy_preds = []
 
-    def fit(self, explanatory, target):
+    def fit(self, explanatory, target, verbose=0):
         """
         Train the Random Forest.
 
@@ -61,7 +61,7 @@ class Random_Forest:
                 seed=self.seed + i,
                 split_criterion="Gini"
             )
-            T.fit(X_bootstrap, y_bootstrap)
+            T.fit(X_bootstrap, y_bootstrap, verbose=verbose)
 
             # Store vectorized prediction function
             self.numpy_preds.append(T.predict)
