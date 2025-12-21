@@ -65,9 +65,15 @@ class Node:
 
     def __str__(self):
         if self.is_root:
-            header = f"root [feature={self.feature}, threshold={self.threshold}]\n"
+            header = (
+                f"root [feature={self.feature}, "
+                f"threshold={self.threshold}]\n"
+            )
         else:
-            header = f"-> node [feature={self.feature}, threshold={self.threshold}]\n"
+            header = (
+                f"-> node [feature={self.feature}, "
+                f"threshold={self.threshold}]\n"
+            )
 
         left_str = self.left_child.__str__()
         right_str = self.right_child.__str__()
