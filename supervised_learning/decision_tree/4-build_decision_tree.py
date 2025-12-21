@@ -97,9 +97,9 @@ class Node:
             child.upper = dict(self.upper)
 
             if child is self.left_child:
-                child.upper[self.feature] = self.threshold
-            else:
                 child.lower[self.feature] = self.threshold
+            else:
+                child.upper[self.feature] = self.threshold
 
         for child in [self.left_child, self.right_child]:
             child.update_bounds_below()
