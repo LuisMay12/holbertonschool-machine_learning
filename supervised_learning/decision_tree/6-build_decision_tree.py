@@ -173,21 +173,47 @@ class Leaf(Node):
     """
 
     def __init__(self, value, depth=None):
+        """_summary_
+
+        Args:
+            value (_type_): _description_
+            depth (_type_, optional): _description_. Defaults to None.
+        """
         super().__init__()
         self.value = value
         self.is_leaf = True
         self.depth = depth
 
     def max_depth_below(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         return self.depth
 
     def count_nodes_below(self, only_leaves=False):
+        """_summary_
+
+        Args:
+            only_leaves (bool, optional): _description_. Defaults to False.
+
+        Returns:
+            _type_: _description_
+        """
         return 1
 
     def get_leaves_below(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         return [self]
 
     def update_bounds_below(self):
+        """_summary_
+        """
         pass
 
     def update_indicator(self):
@@ -241,6 +267,15 @@ class Decision_Tree:
         split_criterion="random",
         root=None
     ):
+        """_summary_
+
+        Args:
+            max_depth (int, optional): _description_. Defaults to 10.
+            min_pop (int, optional): _description_. Defaults to 1.
+            seed (int, optional): _description_. Defaults to 0.
+            split_criterion (str, optional): _description_. Defaults to "random".
+            root (_type_, optional): _description_. Defaults to None.
+        """
         self.rng = np.random.default_rng(seed)
         self.root = root if root else Node(is_root=True)
         self.explanatory = None
@@ -251,15 +286,35 @@ class Decision_Tree:
         self.predict = None
 
     def depth(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         return self.root.max_depth_below()
 
     def count_nodes(self, only_leaves=False):
+        """_summary_
+
+        Args:
+            only_leaves (bool, optional): _description_. Defaults to False.
+
+        Returns:
+            _type_: _description_
+        """
         return self.root.count_nodes_below(only_leaves)
 
     def get_leaves(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         return self.root.get_leaves_below()
 
     def update_bounds(self):
+        """_summary_
+        """
         self.root.update_bounds_below()
 
     def update_predict(self):
@@ -288,4 +343,9 @@ class Decision_Tree:
         return self.root.pred(x)
 
     def __str__(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
         return self.root.__str__() + "\n"
