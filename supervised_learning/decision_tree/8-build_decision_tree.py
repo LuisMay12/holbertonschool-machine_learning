@@ -261,7 +261,7 @@ class Decision_Tree:
         """Train the decision tree."""
         if self.split_criterion == "random":
             self.split_criterion = self.random_split_criterion
-        
+
         if self.split_criterion == "Gini":
             self.split_criterion = self.Gini_split_criterion
 
@@ -419,8 +419,8 @@ class Decision_Tree:
         right_total[right_total == 0] = 1
 
         # Gini impurities
-        left_gini = 1 - np.sum((left_counts / left_total[:, None]) ** 2, axis=1)
-        right_gini = 1 - np.sum((right_counts / right_total[:, None]) ** 2, axis=1)
+        left_gini = 1 - np.sum((left_counts / left_total[:, None])**2, axis=1)
+        right_gini = 1-np.sum((right_counts / right_total[:, None])**2, axis=1)
 
         # Weighted average
         gini_avg = (left_total * left_gini + right_total * right_gini) / n
