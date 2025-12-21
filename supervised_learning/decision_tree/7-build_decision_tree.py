@@ -241,8 +241,7 @@ class Decision_Tree:
     - Depth                     : {self.depth()}
     - Number of nodes           : {self.count_nodes()}
     - Number of leaves          : {self.count_nodes(only_leaves=True)}
-    - Accuracy on training data : {acc}
-    """)
+    - Accuracy on training data : {acc}""")
 
     def fit_node(self, node):
         """Recursively build the tree."""
