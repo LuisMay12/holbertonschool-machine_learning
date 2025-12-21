@@ -202,7 +202,6 @@ class Leaf(Node):
             axis=0
         )
 
-
     def pred(self, x):
         """
         Return the prediction stored in this leaf.
