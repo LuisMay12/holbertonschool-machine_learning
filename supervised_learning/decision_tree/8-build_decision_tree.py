@@ -391,6 +391,9 @@ class Decision_Tree:
 
         thresholds = self.possible_thresholds(node, feature)
         n = X.shape[0]
+        
+        if thresholds.size == 0:
+            return None, np.inf
 
         classes = np.unique(y)
         c = classes.size
