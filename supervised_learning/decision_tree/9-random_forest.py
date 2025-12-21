@@ -35,7 +35,7 @@ class Random_Forest:
         self.seed = seed
         self.numpy_preds = []
 
-    def fit(self, explanatory, target, verbose=0):
+    def fit(self, explanatory, target, n_trees=100, verbose=0):
         """
         Train the Random Forest.
 
@@ -44,48 +44,38 @@ class Random_Forest:
             target (np.ndarray): Training labels.
             verbose (int): If 1, print training statistics.
         """
-        n_samples = explanatory.shape[0]
-        rng = np.random.default_rng(self.seed)
-
+        self.target = target
+        self.explanatory = explanatory
         self.numpy_preds = []
 
         depths = []
-        n_nodes = []
-        n_leaves = []
-        train_accuracies = []
+        nodes = []
+        leaves = []
+        accuracies = []
 
-        for i in range(self.n_trees):
-            # Bootstrap sampling
-            indices = rng.integers(0, n_samples, n_samples)
-            X_bootstrap = explanatory[indices]
-            y_bootstrap = target[indices]
-
-            # Train decision tree
+        for i in range(n_trees):
             T = Decision_Tree(
                 max_depth=self.max_depth,
                 min_pop=self.min_pop,
                 seed=self.seed + i,
-                split_criterion="random"
+                split_criterion="random"   # 🔴 THIS IS THE KEY
             )
-            T.fit(X_bootstrap, y_bootstrap)
+            T.fit(explanatory, target)
 
-            # Collect statistics
-            depths.append(T.depth())
-            n_nodes.append(T.count_nodes())
-            n_leaves.append(T.count_nodes(only_leaves=True))
-            train_accuracies.append(T.accuracy(X_bootstrap, y_bootstrap))
-
-            # Store vectorized prediction function
             self.numpy_preds.append(T.predict)
+            depths.append(T.depth())
+            nodes.append(T.count_nodes())
+            leaves.append(T.count_nodes(only_leaves=True))
+            accuracies.append(T.accuracy(T.explanatory, T.target))
 
         if verbose == 1:
             acc = self.accuracy(self.explanatory, self.target)
             print(f"""  Training finished.
-    - Mean depth                     : {np.mean(depths)}
-    - Mean number of nodes           : {np.mean(n_nodes)}
-    - Mean number of leaves          : {np.mean(n_leaves)}
-    - Mean accuracy on training data : {np.mean(train_accuracies)}
-    - Accuracy of the forest on td   : {acc}""")
+        - Mean depth                     : {np.array(depths).mean()}
+        - Mean number of nodes           : {np.array(nodes).mean()}
+        - Mean number of leaves          : {np.array(leaves).mean()}
+        - Mean accuracy on training data : {np.array(accuracies).mean()}
+        - Accuracy of the forest on td   : {acc}""")
 
     def predict(self, explanatory):
         """
