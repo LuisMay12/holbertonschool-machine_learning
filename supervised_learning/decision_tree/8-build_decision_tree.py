@@ -440,9 +440,14 @@ class Decision_Tree:
         Returns:
             _type_: _description_
         """
+        n_features = self.explanatory.shape[1]
+        k = int(np.sqrt(n_features))
+        features = self.rng.choice(n_features, size=k, replace=False)
+
         X = np.array([
             self.Gini_split_criterion_one_feature(node, i)
-            for i in range(self.explanatory.shape[1])
+            for i in features
         ])
+
         i = np.argmin(X[:, 1])
-        return i, X[i, 0]
+        return features[i], X[i, 0]
