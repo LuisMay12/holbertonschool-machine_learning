@@ -58,7 +58,7 @@ class Random_Forest:
                 max_depth=self.max_depth,
                 min_pop=self.min_pop,
                 seed=self.seed + i,
-                split_criterion="random"   # 🔴 THIS IS THE KEY
+                split_criterion="random"
             )
             T.fit(explanatory, target)
 
@@ -71,11 +71,11 @@ class Random_Forest:
         if verbose == 1:
             acc = self.accuracy(self.explanatory, self.target)
             print(f"""  Training finished.
-        - Mean depth                     : {np.array(depths).mean()}
-        - Mean number of nodes           : {np.array(nodes).mean()}
-        - Mean number of leaves          : {np.array(leaves).mean()}
-        - Mean accuracy on training data : {np.array(accuracies).mean()}
-        - Accuracy of the forest on td   : {acc}""")
+    - Mean depth                     : {np.array(depths).mean()}
+    - Mean number of nodes           : {np.array(nodes).mean()}
+    - Mean number of leaves          : {np.array(leaves).mean()}
+    - Mean accuracy on training data : {np.array(accuracies).mean()}
+    - Accuracy of the forest on td   : {acc}""")
 
     def predict(self, explanatory):
         """
