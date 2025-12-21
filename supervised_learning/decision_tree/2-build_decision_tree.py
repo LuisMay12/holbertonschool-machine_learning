@@ -47,21 +47,22 @@ class Node:
         """
         Add prefix for left child printing.
         """
-        lines = text.split("\n")
+        lines = text.rstrip("\n").split("\n")
         new_text = "    +--" + lines[0] + "\n"
         for x in lines[1:]:
             new_text += "    |  " + x + "\n"
-        return new_text
+        return new_text.rstrip("\n")
+
 
     def right_child_add_prefix(self, text):
         """
         Add prefix for right child printing.
         """
-        lines = text.split("\n")
+        lines = text.rstrip("\n").split("\n")
         new_text = "    +--" + lines[0] + "\n"
         for x in lines[1:]:
             new_text += "       " + x + "\n"
-        return new_text
+        return new_text.rstrip("\n")
 
     def __str__(self):
         """
