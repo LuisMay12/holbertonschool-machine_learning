@@ -42,11 +42,17 @@ class Random_Forest:
         Args:
             explanatory (np.ndarray): Training features.
             target (np.ndarray): Training labels.
+            verbose (int): If 1, print training statistics.
         """
         n_samples = explanatory.shape[0]
         rng = np.random.default_rng(self.seed)
 
         self.numpy_preds = []
+
+        depths = []
+        n_nodes = []
+        n_leaves = []
+        train_accuracies = []
 
         for i in range(self.n_trees):
             # Bootstrap sampling
@@ -61,10 +67,25 @@ class Random_Forest:
                 seed=self.seed + i,
                 split_criterion="Gini"
             )
-            T.fit(X_bootstrap, y_bootstrap, verbose=verbose)
+            T.fit(X_bootstrap, y_bootstrap)
+
+            # Collect statistics
+            depths.append(T.depth())
+            n_nodes.append(T.count_nodes())
+            n_leaves.append(T.count_nodes(only_leaves=True))
+            train_accuracies.append(T.accuracy(X_bootstrap, y_bootstrap))
 
             # Store vectorized prediction function
             self.numpy_preds.append(T.predict)
+
+        if verbose == 1:
+            acc = self.accuracy(explanatory, target)
+            print(f"""  Training finished.
+    - Mean depth                     : {np.mean(depths)}
+    - Mean number of nodes           : {np.mean(n_nodes)}
+    - Mean number of leaves          : {np.mean(n_leaves)}
+    - Mean accuracy on training data : {np.mean(train_accuracies)}
+    - Accuracy of the forest on td   : {acc}""")
 
     def predict(self, explanatory):
         """
@@ -76,12 +97,10 @@ class Random_Forest:
         Returns:
             np.ndarray: Predicted class for each individual.
         """
-        # Collect predictions from all trees
         predictions = np.array([
             pred(explanatory) for pred in self.numpy_preds
-        ])  # shape: (n_trees, n_samples)
+        ])
 
-        # Majority vote per sample
         return np.apply_along_axis(
             lambda x: np.unique(x, return_counts=True)[0][
                 np.argmax(np.unique(x, return_counts=True)[1])
