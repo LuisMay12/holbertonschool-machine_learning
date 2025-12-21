@@ -31,6 +31,12 @@ class Node:
         self.depth = depth
 
     def max_depth_below(self):
+        """
+        Compute the maximum depth below this node.
+
+        Returns:
+            int: Maximum depth among all descendant nodes.
+        """
         return max(
             self.left_child.max_depth_below(),
             self.right_child.max_depth_below()
