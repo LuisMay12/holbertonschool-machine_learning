@@ -137,6 +137,14 @@ class Node:
         )
 
     def left_child_add_prefix(self, text):
+        """_summary_
+
+        Args:
+            text (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         lines = text.rstrip("\n").split("\n")
         out = "    +--" + lines[0] + "\n"
         for line in lines[1:]:
@@ -144,6 +152,14 @@ class Node:
         return out.rstrip("\n")
 
     def right_child_add_prefix(self, text):
+        """_summary_
+
+        Args:
+            text (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         lines = text.rstrip("\n").split("\n")
         out = "    +--" + lines[0] + "\n"
         for line in lines[1:]:
