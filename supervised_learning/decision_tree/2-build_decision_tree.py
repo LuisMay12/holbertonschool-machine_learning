@@ -53,7 +53,6 @@ class Node:
             new_text += "    |  " + x + "\n"
         return new_text.rstrip("\n")
 
-
     def right_child_add_prefix(self, text):
         """
         Add prefix for right child printing.
@@ -65,9 +64,6 @@ class Node:
         return new_text.rstrip("\n")
 
     def __str__(self):
-        """
-        String representation of a node and its subtree.
-        """
         if self.is_root:
             header = f"root [feature={self.feature}, threshold={self.threshold}]\n"
         else:
@@ -78,7 +74,7 @@ class Node:
 
         return (
             header
-            + self.left_child_add_prefix(left_str)
+            + self.left_child_add_prefix(left_str) + "\n"
             + self.right_child_add_prefix(right_str)
         )
 
