@@ -178,6 +178,33 @@ class Decision_Tree:
         self.split_criterion = split_criterion
         self.predict = None
 
+    def depth(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
+        return self.root.max_depth_below()
+
+    def count_nodes(self, only_leaves=False):
+        """_summary_
+
+        Args:
+            only_leaves (bool, optional): _description_. Defaults to False.
+
+        Returns:
+            _type_: _description_
+        """
+        return self.root.count_nodes_below(only_leaves)
+
+    def get_leaves(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
+        return self.root.get_leaves_below()
+
     def np_extrema(self, arr):
         """Return min and max of array."""
         return np.min(arr), np.max(arr)
