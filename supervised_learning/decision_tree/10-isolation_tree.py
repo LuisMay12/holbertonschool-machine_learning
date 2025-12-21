@@ -110,7 +110,14 @@ class Isolation_Random_Tree:
         """
         Recursively build the Isolation Tree.
         """
-        # Choose random split
+
+        if node.sub_population.sum() <= 1:
+            return
+
+        if node.depth == self.max_depth:
+            return
+
+        # Random split
         node.feature, node.threshold = self.random_split_criterion(node)
 
         left_population = (
