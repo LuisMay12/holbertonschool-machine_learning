@@ -294,6 +294,12 @@ class Decision_Tree:
             )
         ]
 
+    def update_bounds(self):
+        """
+        Compute feature bounds for all nodes in the tree.
+        """
+        self.root.update_bounds_below()
+
     def pred(self, x):
         """Predict one individual."""
         return self.root.pred(x)
