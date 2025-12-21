@@ -273,7 +273,7 @@ class Decision_Tree:
             max_depth (int, optional): _description_. Defaults to 10.
             min_pop (int, optional): _description_. Defaults to 1.
             seed (int, optional): _description_. Defaults to 0.
-            split_criterion (str, optional): _description_. Defaults to "random".
+            split_criterion (str, optional): _description_.
             root (_type_, optional): _description_. Defaults to None.
         """
         self.rng = np.random.default_rng(seed)
