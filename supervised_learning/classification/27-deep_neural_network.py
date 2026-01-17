@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Defines a deep neural network performing binary classification
+Defines a deep neural network performing multiclass classification
 """
 
 import numpy as np
@@ -10,19 +10,10 @@ import os
 
 
 class DeepNeuralNetwork:
-    """Deep neural network class for binary classification"""
+    """Deep neural network class for classification"""
 
     def __init__(self, nx, layers):
-        """Initializes the DeepNeuralNetwork
-
-        Args:
-            nx: number of input features (integer)
-            layers: list of positive integers containing the number of nodes
-
-        Raises:
-            TypeError: if nx is not an integer or layers is not a list
-            ValueError: if nx is not positive
-        """
+        """Initializes the deep neural network"""
         if type(nx) is not int:
             raise TypeError("nx must be an integer")
         if nx < 1:
@@ -48,27 +39,24 @@ class DeepNeuralNetwork:
 
     @property
     def L(self):
-        """Returns the number of layers in the neural network"""
+        """Getter for number of layers"""
         return self.__L
 
     @property
     def cache(self):
-        """Returns the cache dictionary"""
+        """Getter for cache"""
         return self.__cache
 
     @property
     def weights(self):
-        """Returns the weights dictionary"""
+        """Getter for weights"""
         return self.__weights
 
     def forward_prop(self, X):
-        """Calculates the forward propagation of the neural network
-
-        Args:
-            X: numpy.ndarray of shape (nx, m) that contains the input data
-
-        Returns:
-            tuple: (output of the network, cache dictionary)
+        """
+        Calculates forward propagation of the neural network
+        - Sigmoid for hidden layers
+        - Softmax for output layer
         """
         self.__cache["A0"] = X
 
@@ -78,48 +66,48 @@ class DeepNeuralNetwork:
             A_prev = self.__cache["A{}".format(layer - 1)]
 
             Z = np.matmul(W, A_prev) + b
-            A = 1 / (1 + np.exp(-Z))
+
+            if layer == self.__L:
+                # Softmax (stable)
+                Z_shift = Z - np.max(Z, axis=0, keepdims=True)
+                exp_Z = np.exp(Z_shift)
+                A = exp_Z / np.sum(exp_Z, axis=0, keepdims=True)
+            else:
+                # Sigmoid
+                A = 1 / (1 + np.exp(-Z))
+
             self.__cache["A{}".format(layer)] = A
 
         return self.__cache["A{}".format(self.__L)], self.__cache
 
     def cost(self, Y, A):
-        """Calculates the cost of the model using logistic regression
-
-        Args:
-            Y: numpy.ndarray of shape (1, m) containing the correct labels
-            A: numpy.ndarray of shape (1, m) containing the predicted labels
-
-        Returns:
-            float: the cost of the model
+        """
+        Categorical cross-entropy cost for one-hot Y
         """
         m = Y.shape[1]
-        return -(1 / m) * np.sum(
-            Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)
-        )
+        # Prevent log(0)
+        A_safe = A + 1e-8
+        return -(1 / m) * np.sum(Y * np.log(A_safe))
 
     def evaluate(self, X, Y):
-        """Evaluates the neural network's predictions
-
-        Args:
-            X: numpy.ndarray of shape (nx, m) containing the input data
-            Y: numpy.ndarray of shape (1, m) containing the correct labels
-
-        Returns:
-            tuple: (predictions, cost)
+        """
+        Evaluates predictions:
+        Returns (one_hot_prediction, cost)
         """
         A, _ = self.forward_prop(X)
-        prediction = (A >= 0.5).astype(int)
-        return prediction, self.cost(Y, A)
+        cost = self.cost(Y, A)
+
+        classes = A.shape[0]
+        m = A.shape[1]
+        pred = np.zeros((classes, m))
+        pred[np.argmax(A, axis=0), np.arange(m)] = 1
+
+        return pred, cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
-        """Calculates one pass of gradient descent on the neural network
-
-        Args:
-            Y: numpy.ndarray of shape (1, m) containing the correct labels
-            cache: dictionary containing all the intermediary
-            values of the network
-            alpha: learning rate (default 0.05)
+        """
+        Calculates one pass of gradient descent on the neural network
+        (Works with softmax+cross-entropy at the output because dZ = A - Y)
         """
         m = Y.shape[1]
         dZ = cache["A{}".format(self.__L)] - Y
@@ -139,20 +127,8 @@ class DeepNeuralNetwork:
 
     def train(self, X, Y, iterations=5000, alpha=0.05,
               verbose=True, graph=True, step=100):
-        """Trains the neural network
-
-        Args:
-            X: numpy.ndarray of shape (nx, m) containing the input data
-            Y: numpy.ndarray of shape (1, m) containing the correct labels
-            iterations: number of iterations to train (default 5000)
-            alpha: learning rate (default 0.05)
-            verbose: boolean to print information during training
-            (default True)
-            graph: boolean to plot the training cost (default True)
-            step: step at which to print info and record cost (default 100)
-
-        Returns:
-            tuple: (predictions, cost) after training
+        """
+        Trains the deep neural network
         """
         if type(iterations) is not int:
             raise TypeError("iterations must be an integer")
@@ -174,14 +150,14 @@ class DeepNeuralNetwork:
 
         for i in range(iterations + 1):
             A, cache = self.forward_prop(X)
-            cost = self.cost(Y, A)
+            c = self.cost(Y, A)
 
             if verbose and (i % step == 0 or i == iterations):
-                print("Cost after {} iterations: {}".format(i, cost))
+                print("Cost after {} iterations: {}".format(i, c))
 
             if graph and (i % step == 0 or i == iterations):
                 iters.append(i)
-                costs.append(cost)
+                costs.append(c)
 
             if i == iterations:
                 break
@@ -198,9 +174,7 @@ class DeepNeuralNetwork:
         return self.evaluate(X, Y)
 
     def save(self, filename):
-        """
-        Saves the object to a file in pickle format
-        """
+        """Saves the object to a file in pickle format"""
         if not filename.endswith(".pkl"):
             filename += ".pkl"
         with open(filename, "wb") as f:
@@ -208,9 +182,7 @@ class DeepNeuralNetwork:
 
     @staticmethod
     def load(filename):
-        """
-        Loads a pickled DeepNeuralNetwork object
-        """
+        """Loads a pickled DeepNeuralNetwork object"""
         if not os.path.exists(filename):
             return None
         with open(filename, "rb") as f:
