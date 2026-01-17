@@ -85,9 +85,9 @@ class DeepNeuralNetwork:
         Categorical cross-entropy cost for one-hot Y
         """
         m = Y.shape[1]
-        # Prevent log(0)
-        A_safe = A + 1e-8
-        return -(1 / m) * np.sum(Y * np.log(A_safe))
+        return -(1 / m) * np.sum(
+            Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)
+        )
 
     def evaluate(self, X, Y):
         """
