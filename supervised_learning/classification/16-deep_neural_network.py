@@ -7,17 +7,10 @@ import numpy as np
 
 
 class DeepNeuralNetwork:
-    """
-    Deep neural network class for binary classification
-    """
+    """Deep neural network class for binary classification"""
 
     def __init__(self, nx, layers):
-        """
-        Initializes the deep neural network
-
-        nx: number of input features
-        layers: list of number of nodes in each layer
-        """
+        """Initializes the deep neural network"""
         if type(nx) is not int:
             raise TypeError("nx must be an integer")
         if nx < 1:
@@ -25,7 +18,6 @@ class DeepNeuralNetwork:
 
         if type(layers) is not list or len(layers) == 0:
             raise TypeError("layers must be a list of positive integers")
-
         if not all(type(n) is int and n > 0 for n in layers):
             raise TypeError("layers must be a list of positive integers")
 
