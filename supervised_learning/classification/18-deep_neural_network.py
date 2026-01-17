@@ -33,3 +33,39 @@ class DeepNeuralNetwork:
             )
             self.__weights["b{}".format(layer)] = np.zeros((n_nodes, 1))
             n_prev = n_nodes
+
+    @property
+    def L(self):
+        """Getter for number of layers"""
+        return self.__L
+
+    @property
+    def cache(self):
+        """Getter for cache"""
+        return self.__cache
+
+    @property
+    def weights(self):
+        """Getter for weights"""
+        return self.__weights
+
+    def forward_prop(self, X):
+        """
+        Calculates forward propagation of the neural network
+
+        X: numpy.ndarray with shape (nx, m)
+        Returns: (A_L, cache)
+        """
+        self.__cache["A0"] = X
+
+        for layer in range(1, self.__L + 1):
+            W = self.__weights["W{}".format(layer)]
+            b = self.__weights["b{}".format(layer)]
+            A_prev = self.__cache["A{}".format(layer - 1)]
+
+            Z = np.matmul(W, A_prev) + b
+            A = 1 / (1 + np.exp(-Z))
+
+            self.__cache["A{}".format(layer)] = A
+
+        return self.__cache["A{}".format(self.__L)], self.__cache
