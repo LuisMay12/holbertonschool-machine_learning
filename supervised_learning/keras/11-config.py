@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 """
-11-config.py
-
 Save and load a model's configuration (architecture) in JSON format.
 """
 
