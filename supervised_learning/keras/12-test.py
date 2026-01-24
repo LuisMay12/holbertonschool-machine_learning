@@ -3,6 +3,8 @@
 Evaluate a Keras model.
 """
 
+import tensorflow.keras as K
+
 
 def test_model(network, data, labels, verbose=True):
     """
@@ -14,8 +16,7 @@ def test_model(network, data, labels, verbose=True):
         labels: Correct one-hot labels for `data`.
         verbose: If True, prints progress/results during evaluation.
 
-    Returns:
-        (loss, accuracy)
+    Returns: the loss and accuracy of the model, respectively
     """
     v = 1 if verbose else 0
     loss, acc = network.evaluate(data, labels, verbose=v)
