@@ -3,7 +3,6 @@
 Save and load a model's configuration (architecture) in JSON format.
 """
 
-import json
 import tensorflow.keras as K
 
 
