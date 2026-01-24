@@ -29,7 +29,8 @@ def load_weights(network, filename):
     Args:
         network (keras.Model): The model to which the weights
         should be loaded.
-        filename (str): Path of the file that the weights should be loaded from.
+        filename (str): Path of the file that the weights
+        should be loaded from.
 
     Returns:
         None
