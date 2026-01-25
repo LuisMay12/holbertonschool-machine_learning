@@ -6,8 +6,7 @@ import matplotlib.pyplot as plt
 
 
 def all_in_one():
-    """Plots the previous 5 graphs in a
-    single figure."""
+    """Plots the previous 5 graphs in a single figure."""
     y0 = np.arange(0, 11) ** 3
 
     mean = [69, 0]
@@ -34,22 +33,22 @@ def all_in_one():
     fig = plt.figure(figsize=(10, 8))
     fig.suptitle('All in One')
 
-    # 0: line
+    # (0, 0) Line graph (no title and no axis labels)
     ax0 = plt.subplot2grid((3, 2), (0, 0))
     ax0.plot(y0, 'r-')
     ax0.set_xlim(0, 10)
-    ax0.set_title('Line Graph', fontsize='x-small')
-    ax0.set_xlabel('X', fontsize='x-small')
-    ax0.set_ylabel('Y', fontsize='x-small')
+    ax0.set_yticks([500, 1000])
 
-    # 1: scatter
+    # (0, 1) Scatter plot
     ax1 = plt.subplot2grid((3, 2), (0, 1))
     ax1.scatter(x1, y1, c='m')
     ax1.set_title("Men's Height vs Weight", fontsize='x-small')
     ax1.set_xlabel('Height (in)', fontsize='x-small')
     ax1.set_ylabel('Weight (lbs)', fontsize='x-small')
+    ax1.set_xticks([60, 70, 80])
+    ax1.set_yticks([170, 180, 190])
 
-    # 2: change scale (log y)
+    # (1, 0) Log-scale line plot
     ax2 = plt.subplot2grid((3, 2), (1, 0))
     ax2.plot(x2, y2)
     ax2.set_yscale('log')
@@ -57,8 +56,9 @@ def all_in_one():
     ax2.set_title('Exponential Decay of C-14', fontsize='x-small')
     ax2.set_xlabel('Time (years)', fontsize='x-small')
     ax2.set_ylabel('Fraction Remaining', fontsize='x-small')
+    ax2.set_xticks([10000, 20000])
 
-    # 3: two lines + legend
+    # (1, 1) Two line plots with legend
     ax3 = plt.subplot2grid((3, 2), (1, 1))
     ax3.plot(x3, y31, 'r--', label='C-14')
     ax3.plot(x3, y32, 'g-', label='Ra-226')
@@ -67,16 +67,20 @@ def all_in_one():
     ax3.set_title('Exponential Decay of Radioactive Elements',
                   fontsize='x-small')
     ax3.set_xlabel('Time (years)', fontsize='x-small')
+    ax3.set_xticks([0, 5000, 10000, 15000, 20000])
     ax3.set_ylabel('Fraction Remaining', fontsize='x-small')
+    ax3.set_yticks([0.0, 0.5, 1.0])
     ax3.legend(loc='upper right', fontsize='x-small')
 
-    # 4: histogram spanning two columns
+    # (2, 0) Histogram spanning two columns
     ax4 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
     ax4.hist(student_grades, bins=range(0, 101, 10), edgecolor='black')
     ax4.set_title('Project A', fontsize='x-small')
     ax4.set_xlabel('Grades', fontsize='x-small')
     ax4.set_ylabel('Number of Students', fontsize='x-small')
     ax4.set_xlim(0, 100)
+    ax4.set_ylim(0, 30)
+    ax4.set_yticks(np.arange(0, 31, 10))
 
-    plt.tight_layout()
+    plt.tight_layout(rect=[0, 0, 1, 0.95])
     plt.show()
