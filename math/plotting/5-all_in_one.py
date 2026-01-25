@@ -33,13 +33,11 @@ def all_in_one():
     fig = plt.figure(figsize=(10, 8))
     fig.suptitle('All in One')
 
-    # (0, 0) Line graph (no title and no axis labels)
     ax0 = plt.subplot2grid((3, 2), (0, 0))
     ax0.plot(y0, 'r-')
     ax0.set_xlim(0, 10)
     ax0.set_yticks([500, 1000])
 
-    # (0, 1) Scatter plot
     ax1 = plt.subplot2grid((3, 2), (0, 1))
     ax1.scatter(x1, y1, c='m')
     ax1.set_title("Men's Height vs Weight", fontsize='x-small')
@@ -48,7 +46,6 @@ def all_in_one():
     ax1.set_xticks([60, 70, 80])
     ax1.set_yticks([170, 180, 190])
 
-    # (1, 0) Log-scale line plot
     ax2 = plt.subplot2grid((3, 2), (1, 0))
     ax2.plot(x2, y2)
     ax2.set_yscale('log')
@@ -58,7 +55,6 @@ def all_in_one():
     ax2.set_ylabel('Fraction Remaining', fontsize='x-small')
     ax2.set_xticks([10000, 20000])
 
-    # (1, 1) Two line plots with legend
     ax3 = plt.subplot2grid((3, 2), (1, 1))
     ax3.plot(x3, y31, 'r--', label='C-14')
     ax3.plot(x3, y32, 'g-', label='Ra-226')
@@ -72,7 +68,6 @@ def all_in_one():
     ax3.set_yticks([0.0, 0.5, 1.0])
     ax3.legend(loc='upper right', fontsize='x-small')
 
-    # (2, 0) Histogram spanning two columns
     ax4 = plt.subplot2grid((3, 2), (2, 0), colspan=2)
     ax4.hist(student_grades, bins=range(0, 101, 10), edgecolor='black')
     ax4.set_title('Project A', fontsize='x-small')
