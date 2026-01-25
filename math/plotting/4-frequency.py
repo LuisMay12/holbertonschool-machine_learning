@@ -17,6 +17,8 @@ def frequency():
     plt.title('Project A')
     plt.xlim(0, 100)
     plt.xticks(range(0, 110, 10))
-    plt.yticks(range(0, int(max(np.histogram(student_grades, bins=np.arange(0, 110, 10))[0])) + 5, 5))
+    # plt.yticks(range(0, int(max(np.histogram(student_grades, bins=np.arange(0, 110, 10))[0])) + 5, 5))
+    plt.ylim(0, 30)                 # fuerza eje Y hasta 30
+    plt.yticks(range(0, 31, 5))
 
     plt.show()
