@@ -25,10 +25,11 @@ def convolve_grayscale_same(images, kernel):
     ph = kh - 1
     pw = kw - 1
 
-    ph_top = ph // 2
-    ph_bottom = ph - ph_top  # just in case ph is odd
-    pw_left = pw // 2
-    pw_right = pw - pw_left
+    # when padding is odd (even-sized kernels), put the "extra" pad on TOP/LEFT
+    ph_top = (ph + 1) // 2
+    ph_bottom = ph // 2
+    pw_left = (pw + 1) // 2
+    pw_right = pw // 2
 
     padded = np.pad(
         images,
