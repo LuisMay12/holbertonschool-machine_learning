@@ -7,68 +7,50 @@ import numpy as np
 
 
 def convolve_grayscale(images, kernel, padding='same', stride=(1, 1)):
-    """Performs a convolution on grayscale images.
+    """
+    Performs a convolution on grayscale images.
 
-    Args:
-        images (np.ndarray): shape (m, h, w) containing grayscale images.
-        kernel (np.ndarray): shape (kh, kw) containing the kernel.
-        padding (str or tuple): 'same', 'valid', or (ph, pw).
-        stride (tuple): (sh, sw).
+    Parameters:
+    - images: numpy.ndarray with shape (m, h, w) containing multiple
+    grayscale images
+    - kernel: numpy.ndarray with shape (kh, kw) containing the kernel
+    for the convolution
+    - padding: either a tuple of (ph, pw), 'same', or 'valid'
+    - stride: tuple of (sh, sw)
 
     Returns:
-        np.ndarray: containing the convolved images.
+    - A numpy.ndarray containing the convolved images
     """
+    # Setup matrixes and padding dimensions
     m, h, w = images.shape
     kh, kw = kernel.shape
     sh, sw = stride
 
-    if padding == 'valid':
-        pt = pb = pl = pr = 0
-
-    elif padding == 'same':
-        # target output size:
-        # round up
-        oh = int(np.ceil(h / sh))
-        ow = int(np.ceil(w / sw))
-
-        # Total padding needed to achieve those output sizes:
-        # oh = floor((h + ph_total - kh)/sh) + 1  where ph_total = pt + pb
-        ph_total = max((oh - 1) * sh + kh - h, 0)
-        pw_total = max((ow - 1) * sw + kw - w, 0)
-
-        # Holberton alignment: extra padding goes to TOP/LEFT when odd
-        pt = (ph_total + 1) // 2
-        pb = ph_total // 2
-        pl = (pw_total + 1) // 2
-        pr = pw_total // 2
-
-    else:
-        # custom (ph, pw) padding per side, symmetric
+    if isinstance(padding, tuple):
         ph, pw = padding
-        pt = pb = ph
-        pl = pr = pw
+    elif padding == 'same':
+        ph = ((h - 1) * sh + kh - h) // 2 + 1
+        pw = ((w - 1) * sw + kw - w) // 2 + 1
+    elif padding == 'valid':
+        ph = 0
+        pw = 0
 
-    # --- Pad the images ---
-    padded = np.pad(
-        images,
-        pad_width=((0, 0), (pt, pb), (pl, pr)),
-        mode='constant',
-        constant_values=0
-    )
+    # Calculate output dimensions
+    output_h = (h + 2 * ph - kh) // sh + 1
+    output_w = (w + 2 * pw - kw) // sw + 1
 
-    # --- Output dimensions ---
-    h_p, w_p = padded.shape[1], padded.shape[2]
-    oh = (h_p - kh) // sh + 1
-    ow = (w_p - kw) // sw + 1
+    # NOTE padding indexes: (before, after), shortcut is (padding,)
+    padded_imgs = np.pad(images, ((0, 0), (ph, ph), (pw, pw)), mode='constant')
 
-    output = np.zeros((m, oh, ow))
+    # Initialize convolution output array
+    convolved = np.zeros((m, output_h, output_w))
 
-    # Only two loops: i (rows), j (cols)
-    for i in range(oh):
-        for j in range(ow):
-            y = i * sh
-            x = j * sw
-            window = padded[:, y:y + kh, x:x + kw]  # (m, kh, kw)
-            output[:, i, j] = np.sum(window * kernel, axis=(1, 2))
+    for i in range(output_h):
+        for j in range(output_w):
+            # Extract region from padded images, scaling indexes by stride
+            region = padded_imgs[:, i*sh:i*sh+kh, j*sw:j*sw+kw]
 
-    return output
+            # Convolve each image (m) for this region (i, j)
+            convolved[:, i, j] = np.sum(region * kernel, axis=(1, 2))
+
+    return convolved
