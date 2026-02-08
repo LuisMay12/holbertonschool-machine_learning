@@ -22,56 +22,48 @@ def convolve_grayscale(images, kernel, padding='same', stride=(1, 1)):
     kh, kw = kernel.shape
     sh, sw = stride
 
-    # Determine padding
-    if isinstance(padding, tuple):
-        ph, pw = padding
-    elif padding == 'valid':
-        ph, pw = 0, 0
+    if padding == 'valid':
+        pt = pb = pl = pr = 0
+
     elif padding == 'same':
         # target output size:
         # round up
         oh = int(np.ceil(h / sh))
         ow = int(np.ceil(w / sw))
 
-        # Solve for padding from:
-        # oh = floor((h + 2ph - kh)/sh) + 1
-        # => 2ph = (oh - 1)*sh + kh - h
+        # Total padding needed to achieve those output sizes:
+        # oh = floor((h + ph_total - kh)/sh) + 1  where ph_total = pt + pb
         ph_total = max((oh - 1) * sh + kh - h, 0)
         pw_total = max((ow - 1) * sw + kw - w, 0)
 
-        # put extra on TOP/LEFT when odd
-        ph = (ph_total + 1) // 2
-        pw = (pw_total + 1) // 2
-        ph_bottom = ph_total // 2
-        pw_right = pw_total // 2
+        # Holberton alignment: extra padding goes to TOP/LEFT when odd
+        pt = (ph_total + 1) // 2
+        pb = ph_total // 2
+        pl = (pw_total + 1) // 2
+        pr = pw_total // 2
 
-        padded = np.pad(
-            images,
-            pad_width=((0, 0), (ph, ph_bottom), (pw, pw_right)),
-            mode='constant',
-            constant_values=0
-        )
     else:
-        error = "padding must be 'same','valid', or a tuple (ph, pw)"
-        raise ValueError(error)
+        # custom (ph, pw) padding per side, symmetric
+        ph, pw = padding
+        pt = pb = ph
+        pl = pr = pw
 
-    # If not 'same' (where we already padded), pad symmetrically here
-    if padding != 'same':
-        padded = np.pad(
-            images,
-            pad_width=((0, 0), (ph, ph), (pw, pw)),
-            mode='constant',
-            constant_values=0
-        )
+    # --- Pad the images ---
+    padded = np.pad(
+        images,
+        pad_width=((0, 0), (pt, pb), (pl, pr)),
+        mode='constant',
+        constant_values=0
+    )
 
+    # --- Output dimensions ---
     h_p, w_p = padded.shape[1], padded.shape[2]
-
     oh = (h_p - kh) // sh + 1
     ow = (w_p - kw) // sw + 1
 
     output = np.zeros((m, oh, ow))
 
-    # Only two loops over output spatial coordinates
+    # Only two loops: i (rows), j (cols)
     for i in range(oh):
         for j in range(ow):
             y = i * sh
