@@ -27,61 +27,46 @@ def conv_backkward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
         dW: partial derivatives with respect to W
         db: partial derivatives with respect to b
     """
+    m, h_new, w_new, c_new = dZ.shape
     m, h_prev, w_prev, c_prev = A_prev.shape
-    kh, kw, c_prev_w, c_new = W.shape
+    kh, kw, c_prev, c_new = W.shape
     sh, sw = stride
 
-    if c_prev_w != c_prev:
-        raise ValueError("W and A_prev channel dimensions do not match")
-    if padding not in ("same", "valid"):
-        raise ValueError('padding must be "same" or "valid"')
-
-    # Padding amounts (match your conv_forward: floor division + symmetric pad)
-    if padding == "same":
-        ph = ((h_prev - 1) * sh + kh - h_prev) // 2
-        pw = ((w_prev - 1) * sw + kw - w_prev) // 2
-    else:
+    if padding == 'same':
+        ph = ((h_prev - 1) * sh + kh - h_prev) // 2 + 1
+        pw = ((w_prev - 1) * sw + kw - w_prev) // 2 + 1
+    elif padding == 'valid':
         ph = 0
         pw = 0
 
-    # Pad A_prev and initialize gradients
-    A_pad = np.pad(A_prev, ((0, 0), (ph, ph), (pw, pw), (0, 0)),
-                   mode="constant")
-    dA_pad = np.zeros_like(A_pad)
-    dW = np.zeros_like(W)
+    # Padding input as needed
+    padded_A_prev = np.pad(A_prev, ((0, 0), (ph, ph), (pw, pw), (0, 0)),
+                           mode='constant')
 
-    # Bias gradient: sum over batch and spatial dims
+    # Initialize derivative arrays
+    dA = np.zeros(shape=padded_A_prev.shape)
+    dW = np.zeros(shape=W.shape)
+    # NOTE db can just be calculated directly
     db = np.sum(dZ, axis=(0, 1, 2), keepdims=True)
 
-    h_new, w_new = dZ.shape[1], dZ.shape[2]
+    for i in range(m):  # Examples (images)
+        for h in range(h_new):  # heights
+            for w in range(w_new):  # widths
+                for c in range(c_new):  # channels
+                    # Prepare slice indexes to account for stride
+                    v_start = h * sh
+                    v_end = v_start + kh
+                    h_start = w * sw
+                    h_end = h_start + kw
+                    # Update gradients for this channel
+                    dA[i, v_start:v_end, h_start:h_end, :] +=\
+                        W[:, :, :, c] * dZ[i, h, w, c]
+                    dW[:, :, :, c] +=\
+                        padded_A_prev[i, v_start:v_end, h_start:h_end, :]\
+                        * dZ[i, h, w, c]
 
-    # Backprop through convolution
-    for i in range(m):
-        for y in range(h_new):
-            y_start = y * sh
-            y_end = y_start + kh
-            for x in range(w_new):
-                x_start = x * sw
-                x_end = x_start + kw
+    if padding == 'same':
+        # Slice off the extra padding if same padding was used
+        dA = dA[:, ph:-ph, pw:-pw, :]
 
-                # (kh, kw, c_prev)
-                a_slice = A_pad[i, y_start:y_end, x_start:x_end, :]
-
-                for c in range(c_new):
-                    dz = dZ[i, y, x, c]
-
-                    # dW accumulates input slice scaled by dz
-                    dW[:, :, :, c] += a_slice * dz
-
-                    # dA accumulates filter
-                    # scaled by dz
-                    scaled = W[:, :, :, c] * dz
-                    dA_pad[i, y_start:y_end, x_start:x_end, :] += scaled
-
-    # Unpad dA to match A_prev shape
-    if ph == 0 and pw == 0:
-        dA_prev = dA_pad
-    else:
-        dA_prev = dA_pad[:, ph:-ph, pw:-pw, :]
-
-    return dA_prev, dW, db
+    return dA, dW, db
