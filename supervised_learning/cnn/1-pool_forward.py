@@ -27,7 +27,7 @@ def pool_forward(A_prev, kernel_shape, stride=(1, 1), mode='max'):
     kh, kw = kernel_shape
     sh, sw = stride
 
-    # Output dimensions (no padding in this task)
+    # Output dimensions
     h_out = (h_prev - kh) // sh + 1
     w_out = (w_prev - kw) // sw + 1
 
