@@ -6,7 +6,7 @@ Performs back propagation over a convolutional layer.
 import numpy as np
 
 
-def conv_backkward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
+def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
     """
     Performs back propagation over a convolutional layer of a neural network.
 
