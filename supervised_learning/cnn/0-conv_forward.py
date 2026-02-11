@@ -36,8 +36,8 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
         ph = 0
         pw = 0
     else:
-        ph = int(np.ceil(((h_prev - 1) * sh + kh - h_prev) / 2))
-        pw = int(np.ceil(((w_prev - 1) * sw + kw - w_prev) / 2))
+        ph = ((h_prev - 1) * sh + kh - h_prev) // 2
+        pw = ((w_prev - 1) * sw + kw - w_prev) // 2
 
     # If padding is odd, put the "extra" pad on TOP and LEFT
     ph_top = (ph + 1) // 2
