@@ -27,36 +27,30 @@ def pool_backward(dA, A_prev, kernel_shape, stride=(1, 1), mode='max'):
         numpy.ndarray: dA_prev, partial derivatives with respect to A_prev
     """
     m, h_new, w_new, c = dA.shape
-    _, h_prev, w_prev, _ = A_prev.shape
-    kh, kw = kernel_shape
     sh, sw = stride
+    kh, kw = kernel_shape
 
-    dA_prev = np.zeros_like(A_prev)
+    # Initialize derivatives array
+    dA_prev = np.zeros(shape=A_prev.shape)
 
-    for i in range(m):
-        for y in range(h_new):
-            y_start = y * sh
-            y_end = y_start + kh
-            for x in range(w_new):
-                x_start = x * sw
-                x_end = x_start + kw
-
-                if mode == 'avg':
-                    # Distribute gradient evenly across the window
-                    da = dA[i, y, x, :]  # (c,)
-                    da = da.reshape((1, 1, 1, c))
-                    avg = da / (kh * kw)
-                    dA_prev[i, y_start:y_end, x_start:x_end, :] += avg
-
-                elif mode == 'max':
-                    # Pass gradient to the max location(s) in the window
-                    # (kh, kw, c)
-                    window = A_prev[i, y_start:y_end, x_start:x_end, :]
-                    # (1, 1, c)
-                    max_vals = np.max(window, axis=(0, 1), keepdims=True)
-                    mask = (window == max_vals)  # (kh, kw, c) boolean
-
-                    da = dA[i, y, x, :].reshape((1, 1, c))  # (1, 1, c)
-                    dA_prev[i, y_start:y_end, x_start:x_end, :] += mask * da
+    for i in range(m):  # Examples (images)
+        for h in range(h_new):  # heights
+            for w in range(w_new):  # widths
+                for f in range(c):  # channels
+                    # Prepare slice indexes to account for stride
+                    v_start = h * sh
+                    v_end = v_start + kh
+                    h_start = w * sw
+                    h_end = h_start + kw
+                    # Update gradients for this channel
+                    if mode == 'avg':
+                        avg_dA = dA[i, h, w, f] / kh / kw
+                        dA_prev[i, v_start:v_end, h_start:h_end, f] +=\
+                            (np.ones((kh, kw)) * avg_dA)
+                    elif mode == 'max':
+                        region = A_prev[i, v_start:v_end, h_start:h_end, f]
+                        mask = (region == np.max(region))
+                        dA_prev[i, v_start:v_end, h_start:h_end, f] +=\
+                            mask * dA[i, h, w, f]
 
     return dA_prev
