@@ -76,9 +76,6 @@ class Yolo:
                 anchor_boxes, c)
         """
         image_h, image_w = image_size.astype(float)
-
-        # Model input size (YOLO uses this for normalizing predictions)
-        # Keras input shape is typically (None, input_h, input_w, 3)
         input_h = float(self.model.input_shape[1])
         input_w = float(self.model.input_shape[2])
 
