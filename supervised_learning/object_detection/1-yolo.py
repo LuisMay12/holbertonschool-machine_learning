@@ -76,8 +76,9 @@ class Yolo:
                 anchor_boxes, c)
         """
         image_h, image_w = image_size.astype(float)
-        input_h = float(self.model.input_shape[1])
-        input_w = float(self.model.input_shape[2])
+        input_shape = K.backend.int_shape(self.model.input)
+        input_h = float(input_shape[1])
+        input_w = float(input_shape[2])
 
         boxes = []
         box_confidences = []
@@ -97,7 +98,6 @@ class Yolo:
             b_conf = self._sigmoid(box_conf)
             b_class = self._sigmoid(class_probs)
 
-            # Create grid of cell coordinates (c_x, c_y)
             # c_x varies along width (columns), c_y varies along height (rows)
             cx = np.arange(grid_w).reshape(1, grid_w, 1)
             cy = np.arange(grid_h).reshape(grid_h, 1, 1)
