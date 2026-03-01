@@ -75,71 +75,38 @@ class Yolo:
                 box_class_probs: list of arrays (grid_h, grid_w,
                 anchor_boxes, c)
         """
-        image_h, image_w = image_size.astype(float)
-        input_shape = K.backend.int_shape(self.model.input)
-        input_h = float(input_shape[1])
-        input_w = float(input_shape[2])
-
         boxes = []
         box_confidences = []
         box_class_probs = []
+        for i, output in enumerate(outputs):
+            anchors = self.anchors[i]
+            grid_height, grid_width = output.shape[:2]
 
-        for out_i, output in enumerate(outputs):
-            grid_h, grid_w, anchor_boxes, _ = output.shape
+            t_xy = output[..., :2]
+            t_wh = output[..., 2:4]
 
-            # Split output into components
-            t_xy = output[..., 0:2]            # (grid_h, grid_w, ab, 2)
-            t_wh = output[..., 2:4]            # (grid_h, grid_w, ab, 2)
-            box_conf = output[..., 4:5]        # (grid_h, grid_w, ab, 1)
-            class_probs = output[..., 5:]      # (grid_h, grid_w, ab, classes)
+            sigmoid_conf = self._sigmoid(output[..., 4])
+            sigmoid_prob = self._sigmoid(output[..., 5:])
 
-            # Apply sigmoid to center offsets, objectness, and class probs
-            b_xy = self._sigmoid(t_xy)
-            b_conf = self._sigmoid(box_conf)
-            b_class = self._sigmoid(class_probs)
+            box_conf = np.expand_dims(sigmoid_conf, axis=-1)
+            box_class_prob = sigmoid_prob
 
-            # c_x varies along width (columns), c_y varies along height (rows)
-            cx = np.arange(grid_w).reshape(1, grid_w, 1)
-            cy = np.arange(grid_h).reshape(grid_h, 1, 1)
-            cx = np.tile(cx, (grid_h, 1, anchor_boxes))
-            cy = np.tile(cy, (1, grid_w, anchor_boxes))
+            box_confidences.append(box_conf)
+            box_class_probs.append(box_class_prob)
 
-            # Expand to align last dimension (for x and y)
-            cx = cx[..., np.newaxis]  # (grid_h, grid_w, ab, 1)
-            cy = cy[..., np.newaxis]  # (grid_h, grid_w, ab, 1)
+            b_wh = anchors * np.exp(t_wh)
+            b_wh /= self.model.inputs[0].shape.as_list()[1:3]
 
-            # Convert center positions to normalized image coordinates
-            # b_x = (sigmoid(t_x) + c_x) / grid_w
-            # b_y = (sigmoid(t_y) + c_y) / grid_h
-            bx = (b_xy[..., 0:1] + cx) / grid_w
-            by = (b_xy[..., 1:2] + cy) / grid_h
+            grid = np.tile(np.indices((grid_width, grid_height)).T,
+                           anchors.shape[0]).reshape(
+                               (grid_height, grid_width) + anchors.shape)
 
-            # Convert width/height to normalized coordinates using anchors
-            # b_w = (anchor_w * exp(t_w)) / input_w
-            # b_h = (anchor_h * exp(t_h)) / input_h
-            anchor_wh = self.anchors[out_i]  # (ab, 2) -> [w, h]
-            anchor_w = anchor_wh[:, 0].reshape(1, 1, anchor_boxes, 1)
-            anchor_h = anchor_wh[:, 1].reshape(1, 1, anchor_boxes, 1)
+            b_xy = (self._sigmoid(t_xy) + grid) / [grid_width, grid_height]
 
-            bw = (anchor_w * np.exp(t_wh[..., 0:1])) / input_w
-            bh = (anchor_h * np.exp(t_wh[..., 1:2])) / input_h
+            b_xy1 = b_xy - (b_wh / 2)
+            b_xy2 = b_xy + (b_wh / 2)
+            box = np.concatenate((b_xy1, b_xy2), axis=-1)
+            box *= np.tile(np.flip(image_size, axis=0), 2)
 
-            # Convert (center x,y, w,h) to corners (x1,y1,x2,y2) normalized
-            x1 = bx - (bw / 2.0)
-            y1 = by - (bh / 2.0)
-            x2 = bx + (bw / 2.0)
-            y2 = by + (bh / 2.0)
-
-            # Scale to original image size
-            x1 *= image_w
-            x2 *= image_w
-            y1 *= image_h
-            y2 *= image_h
-
-            processed_boxes = np.concatenate([x1, y1, x2, y2], axis=-1)
-
-            boxes.append(processed_boxes)
-            box_confidences.append(b_conf)
-            box_class_probs.append(b_class)
-
-        return boxes, box_confidences, box_class_probs
+            boxes.append(box)
+        return (boxes, box_confidences, box_class_probs)
