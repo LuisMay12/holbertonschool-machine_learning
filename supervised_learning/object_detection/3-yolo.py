@@ -163,86 +163,101 @@ class Yolo:
     @staticmethod
     def _iou(box, boxes):
         """
-        Computes IoU between one box and an array of boxes.
+        Calculates the Intersection Over Union (IoU) between a box and an
+        array of boxes.
+
+        Parameters:
+        - box1: a numpy.ndarray of shape (4,) representing the first box
+        - boxes: a numpy.ndarray of shape (?, 4) representing the other boxes
+
+        Returns:
+        - iou_scores: a numpy.ndarray of shape (?) containing the IoU scores
         """
-        x1 = np.maximum(box[0], boxes[:, 0])
-        y1 = np.maximum(box[1], boxes[:, 1])
-        x2 = np.minimum(box[2], boxes[:, 2])
-        y2 = np.minimum(box[3], boxes[:, 3])
+        x1, y1, x2, y2 = box
+        box1_area = (x2 - x1) * (y2 - y1)
 
-        inter_w = np.maximum(0.0, x2 - x1)
-        inter_h = np.maximum(0.0, y2 - y1)
-        inter_area = inter_w * inter_h
+        # Extract dimensions for all other boxes to compare
+        x1s = boxes[:, 0]
+        y1s = boxes[:, 1]
+        x2s = boxes[:, 2]
+        y2s = boxes[:, 3]
 
-        box_h = np.maximum(0.0, box[3] - box[1])
-        box_area = np.maximum(0.0, box[2] - box[0]) * box_h
-        boxes_h = np.maximum(0.0, boxes[:, 3] - boxes[:, 1])
-        boxes_area = np.maximum(0.0, boxes[:, 2] - boxes[:, 0]) * boxes_h
+        boxes_area = (x2s - x1s) * (y2s - y1s)
 
-        union = box_area + boxes_area - inter_area
-        return np.where(union > 0.0, inter_area / union, 0.0)
+        inter_x1 = np.maximum(x1, x1s)
+        inter_y1 = np.maximum(y1, y1s)
+        inter_x2 = np.minimum(x2, x2s)
+        inter_y2 = np.minimum(y2, y2s)
+
+        inter_area = np.maximum(inter_x2 - inter_x1, 0) * \
+            np.maximum(inter_y2 - inter_y1, 0)
+        union_area = box1_area + boxes_area - inter_area
+
+        iou_scores = inter_area / union_area
+        return iou_scores
 
     def non_max_suppression(self, filtered_boxes, box_classes, box_scores):
         """
-        Applies non-max suppression (NMS) to filtered boxes, separately per cls
+        Applies Non-Max Suppression (NMS) to filter the bounding boxes.
 
-        Args:
-            filtered_boxes (np.ndarray): shape (N, 4)
-            box_classes (np.ndarray): shape (N,)
-            box_scores (np.ndarray): shape (N,)
+        Parameters:
+        - filtered_boxes: a numpy.ndarray of shape (?, 4) containing all of
+            the filtered bounding boxes
+        - box_classes: a numpy.ndarray of shape (?,) containing the class
+            number for each box in filtered_boxes
+        - box_scores: a numpy.ndarray of shape (?) containing the box scores
+            for each box in filtered_boxes
+        - iou_threshold: a float representing the Intersection Over Union
+            (IoU) threshold for NMS
 
         Returns:
-            tuple: ordered by class then descending score within each class.
+        - box_predictions: a numpy.ndarray of shape (?, 4) containing all of
+            the predicted bounding boxes ordered by class and box score
+        - predicted_box_classes: a numpy.ndarray of shape (?,) containing the
+            class number for box_predictions ordered by class and box score
+        - predicted_box_scores: a numpy.ndarray of shape (?) containing the
+            box scores for box_predictions ordered by class and box score
         """
+        unique_classes = np.unique(box_classes)
         box_predictions = []
         predicted_box_classes = []
         predicted_box_scores = []
 
-        if filtered_boxes.size == 0:
-            return (np.empty((0, 4)),
-                    np.empty((0,), dtype=int),
-                    np.empty((0,)))
+        for cls in unique_classes:
+            # Sort the boxes by their unique class
+            cls_indices = np.where(box_classes == cls)
+            cls_boxes = filtered_boxes[cls_indices]
+            cls_scores = box_scores[cls_indices]
 
-        for cls in np.unique(box_classes):
-            cls_mask = box_classes == cls
-            cls_boxes = filtered_boxes[cls_mask]
-            cls_scores = box_scores[cls_mask]
+            # Sort the boxes by their scores (in descending order)
+            sorted_indices = np.argsort(cls_scores)[::-1]
+            cls_boxes = cls_boxes[sorted_indices]
+            cls_scores = cls_scores[sorted_indices]
 
-            # Sort boxes for this class by score descending
-            order = np.argsort(cls_scores)[::-1]
-            cls_boxes = cls_boxes[order]
-            cls_scores = cls_scores[order]
+            while len(cls_boxes) > 0:
+                # Select the box with the highest score
+                box = cls_boxes[0]
+                score = cls_scores[0]
 
-            keep = []
-            while cls_boxes.shape[0] > 0:
-                # Keep the highest-score box
-                keep.append(0)
+                box_predictions.append(box)
+                predicted_box_classes.append(cls)
+                predicted_box_scores.append(score)
 
-                if cls_boxes.shape[0] == 1:
+                # If this was the last box, no need to keep going
+                if len(cls_boxes) == 1:
                     break
 
-                ious = self._iou(cls_boxes[0], cls_boxes[1:])
-                # Keep boxes with IoU <= threshold
-                remaining = np.where(ious <= self.nms_t)[0] + 1
-                cls_boxes = cls_boxes[remaining]
-                cls_scores = cls_scores[remaining]
+                # Calculate IoU between the selected box and the rest
+                ious = self._iou(box, cls_boxes[1:])
+                # Select boxes with IoU lower than the threshold
+                remaining_indices = np.where(ious < self.nms_t)[0]
 
-            kept_boxes = filtered_boxes[cls_mask][order][keep]
-            kept_scores = box_scores[cls_mask][order][keep]
-            kept_classes = np.full(kept_scores.shape, cls, dtype=int)
+                # Exclude the box we just added to the output
+                cls_boxes = cls_boxes[1:][remaining_indices]
+                cls_scores = cls_scores[1:][remaining_indices]
 
-            box_predictions.append(kept_boxes)
-            predicted_box_scores.append(kept_scores)
-            predicted_box_classes.append(kept_classes)
-
-        box_predictions = np.concatenate(box_predictions, axis=0)
-        predicted_box_classes = np.concatenate(predicted_box_classes, axis=0)
-        predicted_box_scores = np.concatenate(predicted_box_scores, axis=0)
-
-        # Order by class then score descending within class
-        sort_idx = np.lexsort((-predicted_box_scores, predicted_box_classes))
-        box_predictions = box_predictions[sort_idx]
-        predicted_box_classes = predicted_box_classes[sort_idx]
-        predicted_box_scores = predicted_box_scores[sort_idx]
+        box_predictions = np.array(box_predictions)
+        predicted_box_classes = np.array(predicted_box_classes)
+        predicted_box_scores = np.array(predicted_box_scores)
 
         return box_predictions, predicted_box_classes, predicted_box_scores
