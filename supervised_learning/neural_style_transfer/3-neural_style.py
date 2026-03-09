@@ -100,22 +100,30 @@ class NST:
         """
         Load the VGG19 model with AveragePooling2D instead of MaxPooling2D.
         """
-        vgg = tf.keras.applications.VGG19(
-            include_top=False, weights='imagenet')
 
-        vgg.trainable = False
+        modelVGG19 = tf.keras.applications.VGG19(
+            include_top=False,
+            weights='imagenet'
+        )
 
-        for layer in vgg.layers:
-            if isinstance(layer, tf.keras.layers.MaxPooling2D):
-                layer.__class__ = tf.keras.layers.AveragePooling2D
+        modelVGG19.trainable = False
 
-        style_outputs = [vgg.get_layer(name).output
-                         for name in self.style_layers]
-        content_output = vgg.get_layer(self.content_layer).output
+        # Selected layers
+        selected_layers = self.style_layers + [self.content_layer]
 
-        self.model = tf.keras.models.Model(
-            inputs=vgg.input,
-            outputs=style_outputs + [content_output])
+        outputs = [modelVGG19.get_layer(name).output for name
+                   in selected_layers]
+
+        # Construct model
+        model = tf.keras.Model([modelVGG19.input], outputs)
+
+        # replace MaxPooling layers by AveragePooling layers
+        custom_objects = {'MaxPooling2D': tf.keras.layers.AveragePooling2D}
+        tf.keras.models.save_model(model, 'vgg_base.h5')
+        model_avg = tf.keras.models.load_model('vgg_base.h5',
+                                               custom_objects=custom_objects)
+
+        self.model = model_avg
 
     @staticmethod
     def gram_matrix(input_layer):
