@@ -97,33 +97,24 @@ class NST:
 
     def load_model(self):
         """
-        Creates the model used to calculate cost.
-
-        The model uses VGG19 as a base and returns the outputs of the
-        style layers followed by the content layer.
-
-        Saves:
-            self.model
+        Load the VGG19 model with AveragePooling2D instead of MaxPooling2D.
         """
+        # Load VGG19 model from Keras API
         vgg = tf.keras.applications.VGG19(
-            include_top=False,
-            weights='imagenet'
-        )
+            include_top=False, weights='imagenet')
 
         vgg.trainable = False
+        # Replace MaxPooling2D layers with AveragePooling2D layers
+        for layer in vgg.layers:
+            if isinstance(layer, tf.keras.layers.MaxPooling2D):
+                layer.__class__ = tf.keras.layers.AveragePooling2D
 
-        custom_objects = {'MaxPooling2D': tf.keras.layers.AveragePooling2D}
-        vgg = tf.keras.models.clone_model(vgg, custom_objects=custom_objects)
-        vgg.set_weights(
-            tf.keras.applications.VGG19(
-                include_top=False,
-                weights='imagenet'
-            ).get_weights()
-        )
-        vgg.trainable = False
+        # get outputs of the style and content layers from modified VGG19
+        style_outputs = [vgg.get_layer(
+            name).output for name in self.style_layers]
+        content_output = vgg.get_layer(self.content_layer).output
 
-        outputs = [vgg.get_layer(name).output for name in self.style_layers]
-        outputs.append(vgg.get_layer(self.content_layer).output)
-
-        self.model = tf.keras.models.Model(inputs=vgg.input, outputs=outputs)
-        self.model.trainable = False
+        # Create the model, make it non-trainable and return it
+        self.model = tf.keras.models.Model(
+            inputs=vgg.input,
+            outputs=style_outputs + [content_output])
