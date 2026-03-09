@@ -294,15 +294,15 @@ class NST:
         Returns:
             gradients, J_total, J_content, J_style
         """
-        shape = self.content_image.shape
+        s = self.content_image.shape
+        if (not isinstance(generated_image, (tf.Tensor, tf.Variable))
+                or s != generated_image.shape):
+            raise TypeError(f"generated_image must be a tensor of shape {s}")
 
-        if (not isinstance(generated_image, (tf.Tensor, tf.Variable)) or
-                generated_image.shape != shape):
-            raise TypeError(
-                "generated_image must be a tensor of shape {}".format(shape)
-            )
-
+        # Use GradientTape to record operations and easy differentiation
         with tf.GradientTape() as tape:
+            # tracking generated_image tensor for gradient calculation
+            tape.watch(generated_image)
             J_total, J_content, J_style = self.total_cost(generated_image)
 
         gradients = tape.gradient(J_total, generated_image)
