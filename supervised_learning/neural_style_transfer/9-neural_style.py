@@ -377,4 +377,4 @@ class NST:
                 optimizer.apply_gradients([(gradients, generated_image)])
                 generated_image.assign(tf.clip_by_value(generated_image, 0, 1))
 
-        return best_image, best_cost
+        return best_image[0], best_cost
