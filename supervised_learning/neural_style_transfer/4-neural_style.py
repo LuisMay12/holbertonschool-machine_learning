@@ -195,8 +195,9 @@ class NST:
                 gram_target.shape[0] != 1 or
                 gram_target.shape[1] != c or
                 gram_target.shape[2] != c):
+            error_text = "gram_target must be a tensor of shape [1, {}, {}]"
             raise TypeError(
-                "gram_target must be a tensor of shape [1, {}, {}]".format(c, c)
+                error_text.format(c, c)
             )
 
         gram_style = self.gram_matrix(style_output)
