@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Module that calculates likelihoods for Bayesian probability"""
+import numpy as np
 
 
 def likelihood(x, n, P):
@@ -23,7 +24,6 @@ def likelihood(x, n, P):
         TypeError: if P is not a 1D numpy.ndarray
         ValueError: if values in P are not in the range [0, 1]
     """
-    import numpy as np
 
     if not isinstance(n, int) or n <= 0:
         raise ValueError("n must be a positive integer")
