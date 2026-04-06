@@ -17,12 +17,14 @@ def pca(X, var=0.95):
         W: numpy.ndarray of shape (d, nd) containing the weights
            matrix that maintains var fraction of X's original variance
     """
-    U, S, Vt = np.linalg.svd(X)
+    # Compute the SVD of the data matrix
+    U, S, Vt = np.linalg.svd(X, full_matrices=False)
 
-    explained_variance = (S ** 2) / np.sum(S ** 2)
-    cumulative_variance = np.cumsum(explained_variance)
+    # Compute the total variance explained by the singular values
+    cum_variance = np.cumsum(S ** 2) / np.sum(S ** 2)
 
-    nd = np.where(cumulative_variance >= var)[0][0] + 1
+    # Determine the number of components to keep (indexing starts at 0)
+    num_components = np.argmax(cum_variance >= var) + 1
 
-    W = Vt.T[:, :nd]
-    return W
+    # Transposed (for shape(d, nd)) top "num_components + 1" rows of Vt
+    return Vt[:num_components + 1].T
