@@ -18,28 +18,21 @@ def maximization(X, g):
             S is a numpy.ndarray of shape (k, d, d) of updated covariances
         Returns (None, None, None) on failure
     """
-    if not isinstance(X, np.ndarray) or X.ndim != 2:
-        return None, None, None
-
-    if not isinstance(g, np.ndarray) or g.ndim != 2:
+    if (not isinstance(X, np.ndarray) or X.ndim != 2 or
+        not isinstance(g, np.ndarray) or g.ndim != 2 or
+        X.shape[0] != g.shape[1] or
+            not np.allclose(g.sum(axis=0), 1.0)):
         return None, None, None
 
     n, d = X.shape
-    k, n_g = g.shape
+    k, _ = g.shape
 
-    if n != n_g:
-        return None, None, None
-
-    zg = np.sum(g, axis=1)
-    if np.any(zg == 0):
-        return None, None, None
-
-    pi = zg / n
-    m = (g @ X) / zg[:, np.newaxis]
+    pi = np.sum(g, axis=1) / n
+    m = np.dot(g, X) / np.sum(g, axis=1)[:, np.newaxis]
 
     S = np.zeros((k, d, d))
     for i in range(k):
         diff = X - m[i]
-        S[i] = ((g[i][:, np.newaxis] * diff).T @ diff) / zg[i]
+        S[i] = np.dot(g[i] * diff.T, diff) / np.sum(g[i])
 
     return pi, m, S
