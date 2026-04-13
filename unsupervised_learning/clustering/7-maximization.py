@@ -30,24 +30,16 @@ def maximization(X, g):
     if n != n_g:
         return None, None, None
 
-    if not np.isclose(np.sum(g, axis=0), 1).all():
+    zg = np.sum(g, axis=1)
+    if np.any(zg == 0):
         return None, None, None
 
-    if np.any(g < 0) or np.any(g > 1):
-        return None, None, None
-
-    weights = np.sum(g, axis=1)
-
-    if np.any(weights == 0):
-        return None, None, None
-
-    pi = weights / n
-    m = (g @ X) / weights[:, np.newaxis]
+    pi = zg / n
+    m = (g @ X) / zg[:, np.newaxis]
 
     S = np.zeros((k, d, d))
     for i in range(k):
         diff = X - m[i]
-        weighted_diff = g[i][:, np.newaxis] * diff
-        S[i] = (weighted_diff.T @ diff) / weights[i]
+        S[i] = ((g[i][:, np.newaxis] * diff).T @ diff) / zg[i]
 
     return pi, m, S
