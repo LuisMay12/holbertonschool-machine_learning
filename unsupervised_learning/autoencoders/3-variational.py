@@ -22,17 +22,16 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     def sampling(args):
         """Samples a latent vector using the reparameterization trick."""
         z_mean, z_log_var = args
-        batch = keras.backend.shape(z_mean)[0]
         epsilon = keras.backend.random_normal(
-            shape=(batch, latent_dims),
+            shape=keras.backend.shape(z_mean),
             mean=0.0,
             stddev=1.0
         )
 
         return z_mean + keras.backend.exp(z_log_var / 2) * epsilon
 
-    input_layer = keras.Input(shape=(input_dims,))
-    encoded = input_layer
+    inputs = keras.Input(shape=(input_dims,))
+    encoded = inputs
 
     for nodes in hidden_layers:
         encoded = keras.layers.Dense(nodes, activation='relu')(encoded)
@@ -50,31 +49,29 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     z = keras.layers.Lambda(sampling)([z_mean, z_log_var])
 
     encoder = keras.Model(
-        inputs=input_layer,
+        inputs=inputs,
         outputs=[z, z_mean, z_log_var]
     )
 
-    latent_input = keras.Input(shape=(latent_dims,))
-    decoded = latent_input
+    latent_inputs = keras.Input(shape=(latent_dims,))
+    decoded = latent_inputs
 
     for nodes in reversed(hidden_layers):
         decoded = keras.layers.Dense(nodes, activation='relu')(decoded)
 
-    output_layer = keras.layers.Dense(
+    outputs = keras.layers.Dense(
         input_dims,
         activation='sigmoid'
     )(decoded)
 
-    decoder = keras.Model(inputs=latent_input, outputs=output_layer)
+    decoder = keras.Model(inputs=latent_inputs, outputs=outputs)
 
-    auto_input = keras.Input(shape=(input_dims,))
-    auto_z, auto_mean, auto_log_var = encoder(auto_input)
-    auto_output = decoder(auto_z)
+    reconstructed = decoder(z)
 
-    auto = keras.Model(inputs=auto_input, outputs=auto_output)
+    auto = keras.Model(inputs=inputs, outputs=reconstructed)
 
     def vae_loss(y_true, y_pred):
-        """Calculates the VAE loss."""
+        """Calculates the variational autoencoder loss."""
         reconstruction_loss = keras.backend.binary_crossentropy(
             y_true,
             y_pred
@@ -84,9 +81,9 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
             axis=1
         )
 
-        kl_loss = 1 + auto_log_var
-        kl_loss -= keras.backend.square(auto_mean)
-        kl_loss -= keras.backend.exp(auto_log_var)
+        kl_loss = 1 + z_log_var
+        kl_loss -= keras.backend.square(z_mean)
+        kl_loss -= keras.backend.exp(z_log_var)
         kl_loss = keras.backend.sum(kl_loss, axis=1)
         kl_loss *= -0.5
 
