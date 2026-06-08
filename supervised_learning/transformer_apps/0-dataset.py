@@ -34,12 +34,12 @@ class Dataset:
         )
 
         def get_training_corpus(index):
-            """Generate sentences from the dataset for tokenizer training."""
-            for pt, en in data:
+            """Generate batches of sentences for tokenizer training."""
+            for pt, en in data.batch(1000):
                 if index == 0:
-                    yield pt.numpy().decode('utf-8')
+                    yield [sentence.decode('utf-8') for sentence in pt.numpy()]
                 else:
-                    yield en.numpy().decode('utf-8')
+                    yield [sentence.decode('utf-8') for sentence in en.numpy()]
 
         tokenizer_pt = tokenizer_pt.train_new_from_iterator(
             get_training_corpus(0),
