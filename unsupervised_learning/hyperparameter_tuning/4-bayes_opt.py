@@ -22,7 +22,6 @@ class BayesianOptimization:
     def acquisition(self):
         """Calculate the next best sample location."""
         mu, sigma = self.gp.predict(self.X_s)
-        std = np.sqrt(sigma)
 
         if self.minimize:
             best = np.min(self.gp.Y)
@@ -32,9 +31,9 @@ class BayesianOptimization:
             improvement = mu - best - self.xsi
 
         Z = np.zeros_like(improvement)
-        np.divide(improvement, std, out=Z, where=std != 0)
-        EI = improvement * norm.cdf(Z) + std * norm.pdf(Z)
-        EI[std == 0] = 0
+        np.divide(improvement, sigma, out=Z, where=sigma != 0)
+        EI = improvement * norm.cdf(Z) + sigma * norm.pdf(Z)
+        EI[sigma == 0] = 0
 
         X_next = self.X_s[np.argmax(EI)]
 
