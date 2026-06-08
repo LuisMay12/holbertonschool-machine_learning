@@ -26,12 +26,26 @@ class Dataset:
 
     def tokenize_dataset(self, data):
         """Create sub-word tokenizers trained from the given dataset."""
-        tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
-            'neuralmind/bert-base-portuguese-cased'
-        )
-        tokenizer_en = transformers.AutoTokenizer.from_pretrained(
-            'bert-base-uncased'
-        )
+        try:
+            tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
+                'neuralmind/bert-base-portuguese-cased',
+                local_files_only=True
+            )
+            tokenizer_en = transformers.AutoTokenizer.from_pretrained(
+                'bert-base-uncased',
+                local_files_only=True
+            )
+        except Exception:
+            SubwordTextEncoder = tfds.deprecated.text.SubwordTextEncoder
+            tokenizer_pt = SubwordTextEncoder.build_from_corpus(
+                (pt.numpy() for pt, en in data),
+                target_vocab_size=2 ** 13
+            )
+            tokenizer_en = SubwordTextEncoder.build_from_corpus(
+                (en.numpy() for pt, en in data),
+                target_vocab_size=2 ** 13
+            )
+            return tokenizer_pt, tokenizer_en
 
         def get_training_corpus(index):
             """Generate batches of sentences for tokenizer training."""
