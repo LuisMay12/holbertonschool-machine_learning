@@ -1,0 +1,521 @@
+Bayesian Optimization Report
+============================
+
+Model: one hidden layer NumPy neural network
+Dataset: synthetic two-class moon dataset
+Metric: validation accuracy
+Objective minimized: 1 - validation accuracy
+Maximum Bayesian optimization iterations: 30
+
+Best run
+--------
+Run: 32
+Validation accuracy: 0.875000
+Objective score: 0.125000
+Best epoch: 4
+Checkpoint: bayes_opt_checkpoints\run032_lr0.00222_units128_drop0.12_l20.000014_batch64.npz
+Hyperparameters:
+- learning_rate: 0.0022181532083007925
+- hidden_units: 128
+- dropout_rate: 0.11620826364302622
+- l2: 1.443002908187936e-05
+- batch_size: 64
+
+All runs
+--------
+{
+  "run": 1,
+  "score": 0.15833333333333333,
+  "val_accuracy": 0.8416666666666667,
+  "best_epoch": 7,
+  "checkpoint": "bayes_opt_checkpoints\\run001_lr0.00152_units128_drop0.26_l20.000001_batch128.npz",
+  "hyperparameters": {
+    "learning_rate": 0.001518747130556462,
+    "hidden_units": 128,
+    "dropout_rate": 0.26444745987645224,
+    "l2": 1.2046852412030334e-06,
+    "batch_size": 128
+  }
+}
+{
+  "run": 2,
+  "score": 0.14166666666666672,
+  "val_accuracy": 0.8583333333333333,
+  "best_epoch": 1,
+  "checkpoint": "bayes_opt_checkpoints\\run002_lr0.02557_units8_drop0.28_l20.002140_batch32.npz",
+  "hyperparameters": {
+    "learning_rate": 0.025573319358134967,
+    "hidden_units": 8,
+    "dropout_rate": 0.28402228054696615,
+    "l2": 0.002140323314098605,
+    "batch_size": 32
+  }
+}
+{
+  "run": 3,
+  "score": 0.14166666666666672,
+  "val_accuracy": 0.8583333333333333,
+  "best_epoch": 11,
+  "checkpoint": "bayes_opt_checkpoints\\run003_lr0.03998_units64_drop0.46_l20.001296_batch128.npz",
+  "hyperparameters": {
+    "learning_rate": 0.0399842959555419,
+    "hidden_units": 64,
+    "dropout_rate": 0.4627983191463305,
+    "l2": 0.0012960656597279722,
+    "batch_size": 128
+  }
+}
+{
+  "run": 4,
+  "score": 0.15833333333333333,
+  "val_accuracy": 0.8416666666666667,
+  "best_epoch": 24,
+  "checkpoint": "bayes_opt_checkpoints\\run004_lr0.00108_units64_drop0.04_l20.003020_batch32.npz",
+  "hyperparameters": {
+    "learning_rate": 0.0010846561944145151,
+    "hidden_units": 64,
+    "dropout_rate": 0.03551802909894347,
+    "l2": 0.003020289640158663,
+    "batch_size": 32
+  }
+}
+{
+  "run": 5,
+  "score": 0.16666666666666663,
+  "val_accuracy": 0.8333333333333334,
+  "best_epoch": 5,
+  "checkpoint": "bayes_opt_checkpoints\\run005_lr0.01373_units64_drop0.04_l20.008212_batch64.npz",
+  "hyperparameters": {
+    "learning_rate": 0.013729591091158011,
+    "hidden_units": 64,
+    "dropout_rate": 0.043564649850770354,
+    "l2": 0.008212461922256862,
+    "batch_size": 64
+  }
+}
+{
+  "run": 6,
+  "score": 0.14166666666666672,
+  "val_accuracy": 0.8583333333333333,
+  "best_epoch": 22,
+  "checkpoint": "bayes_opt_checkpoints\\run006_lr0.01743_units64_drop0.37_l20.000366_batch128.npz",
+  "hyperparameters": {
+    "learning_rate": 0.017429904159550317,
+    "hidden_units": 64,
+    "dropout_rate": 0.3739420824566343,
+    "l2": 0.00036565379976055066,
+    "batch_size": 128
+  }
+}
+{
+  "run": 7,
+  "score": 0.30833333333333335,
+  "val_accuracy": 0.6916666666666667,
+  "best_epoch": 0,
+  "checkpoint": "bayes_opt_checkpoints\\run007_lr0.00010_units8_drop0.50_l20.000001_batch16.npz",
+  "hyperparameters": {
+    "learning_rate": 0.0001,
+    "hidden_units": 8,
+    "dropout_rate": 0.5,
+    "l2": 1e-06,
+    "batch_size": 16
+  }
+}
+{
+  "run": 8,
+  "score": 0.14166666666666672,
+  "val_accuracy": 0.8583333333333333,
+  "best_epoch": 12,
+  "checkpoint": "bayes_opt_checkpoints\\run008_lr0.05012_units8_drop0.18_l20.010000_batch32.npz",
+  "hyperparameters": {
+    "learning_rate": 0.05011872336272722,
+    "hidden_units": 8,
+    "dropout_rate": 0.17513272087692075,
+    "l2": 0.01,
+    "batch_size": 32
+  }
+}
+{
+  "run": 9,
+  "score": 0.15000000000000002,
+  "val_accuracy": 0.85,
+  "best_epoch": 0,
+  "checkpoint": "bayes_opt_checkpoints\\run009_lr0.04206_units8_drop0.50_l20.000457_batch32.npz",
+  "hyperparameters": {
+    "learning_rate": 0.04205626863941285,
+    "hidden_units": 8,
+    "dropout_rate": 0.5,
+    "l2": 0.000457244973739596,
+    "batch_size": 32
+  }
+}
+{
+  "run": 10,
+  "score": 0.14166666666666672,
+  "val_accuracy": 0.8583333333333333,
+  "best_epoch": 0,
+  "checkpoint": "bayes_opt_checkpoints\\run010_lr0.05012_units64_drop0.50_l20.000001_batch16.npz",
+  "hyperparameters": {
+    "learning_rate": 0.05011872336272722,
+    "hidden_units": 64,
+    "dropout_rate": 0.5,
+    "l2": 1e-06,
+    "batch_size": 16
+  }
+}
+{
+  "run": 11,
+  "score": 0.6916666666666667,
+  "val_accuracy": 0.30833333333333335,
+  "best_epoch": 14,
+  "checkpoint": "bayes_opt_checkpoints\\run011_lr0.00010_units8_drop0.00_l20.010000_batch32.npz",
+  "hyperparameters": {
+    "learning_rate": 0.0001,
+    "hidden_units": 8,
+    "dropout_rate": 0.0,
+    "l2": 0.01,
+    "batch_size": 32
+  }
+}
+{
+  "run": 12,
+  "score": 0.6333333333333333,
+  "val_accuracy": 0.36666666666666664,
+  "best_epoch": 0,
+  "checkpoint": "bayes_opt_checkpoints\\run012_lr0.00051_units64_drop0.47_l20.008952_batch128.npz",
+  "hyperparameters": {
+    "learning_rate": 0.0005140196248790939,
+    "hidden_units": 64,
+    "dropout_rate": 0.47013433992980946,
+    "l2": 0.008952385675966717,
+    "batch_size": 128
+  }
+}
+{
+  "run": 13,
+  "score": 0.15833333333333333,
+  "val_accuracy": 0.8416666666666667,
+  "best_epoch": 1,
+  "checkpoint": "bayes_opt_checkpoints\\run013_lr0.05012_units64_drop0.50_l20.000060_batch128.npz",
+  "hyperparameters": {
+    "learning_rate": 0.05011872336272722,
+    "hidden_units": 64,
+    "dropout_rate": 0.5,
+    "l2": 6.0413026558627855e-05,
+    "batch_size": 128
+  }
+}
+{
+  "run": 14,
+  "score": 0.14166666666666672,
+  "val_accuracy": 0.8583333333333333,
+  "best_epoch": 0,
+  "checkpoint": "bayes_opt_checkpoints\\run014_lr0.00410_units64_drop0.36_l20.000019_batch16.npz",
+  "hyperparameters": {
+    "learning_rate": 0.004099714745730427,
+    "hidden_units": 64,
+    "dropout_rate": 0.3589533378751565,
+    "l2": 1.8595077388499147e-05,
+    "batch_size": 16
+  }
+}
+{
+  "run": 15,
+  "score": 0.15833333333333333,
+  "val_accuracy": 0.8416666666666667,
+  "best_epoch": 12,
+  "checkpoint": "bayes_opt_checkpoints\\run015_lr0.00086_units64_drop0.00_l20.000001_batch16.npz",
+  "hyperparameters": {
+    "learning_rate": 0.0008566970773652362,
+    "hidden_units": 64,
+    "dropout_rate": 0.0,
+    "l2": 1e-06,
+    "batch_size": 16
+  }
+}
+{
+  "run": 16,
+  "score": 0.1333333333333333,
+  "val_accuracy": 0.8666666666666667,
+  "best_epoch": 23,
+  "checkpoint": "bayes_opt_checkpoints\\run016_lr0.00076_units64_drop0.46_l20.000025_batch32.npz",
+  "hyperparameters": {
+    "learning_rate": 0.0007621189972551204,
+    "hidden_units": 64,
+    "dropout_rate": 0.45959281421422055,
+    "l2": 2.5335735260328456e-05,
+    "batch_size": 32
+  }
+}
+{
+  "run": 17,
+  "score": 0.14166666666666672,
+  "val_accuracy": 0.8583333333333333,
+  "best_epoch": 1,
+  "checkpoint": "bayes_opt_checkpoints\\run017_lr0.03950_units64_drop0.15_l20.000080_batch32.npz",
+  "hyperparameters": {
+    "learning_rate": 0.03950487634498076,
+    "hidden_units": 64,
+    "dropout_rate": 0.15120701471805828,
+    "l2": 8.00613682878811e-05,
+    "batch_size": 32
+  }
+}
+{
+  "run": 18,
+  "score": 0.14166666666666672,
+  "val_accuracy": 0.8583333333333333,
+  "best_epoch": 7,
+  "checkpoint": "bayes_opt_checkpoints\\run018_lr0.01150_units64_drop0.00_l20.000001_batch32.npz",
+  "hyperparameters": {
+    "learning_rate": 0.011500327948612974,
+    "hidden_units": 64,
+    "dropout_rate": 0.0,
+    "l2": 1e-06,
+    "batch_size": 32
+  }
+}
+{
+  "run": 19,
+  "score": 0.14166666666666672,
+  "val_accuracy": 0.8583333333333333,
+  "best_epoch": 1,
+  "checkpoint": "bayes_opt_checkpoints\\run019_lr0.05012_units64_drop0.00_l20.001471_batch16.npz",
+  "hyperparameters": {
+    "learning_rate": 0.05011872336272722,
+    "hidden_units": 64,
+    "dropout_rate": 0.0,
+    "l2": 0.0014710903547320469,
+    "batch_size": 16
+  }
+}
+{
+  "run": 20,
+  "score": 0.16666666666666663,
+  "val_accuracy": 0.8333333333333334,
+  "best_epoch": 11,
+  "checkpoint": "bayes_opt_checkpoints\\run020_lr0.00033_units64_drop0.00_l20.003088_batch16.npz",
+  "hyperparameters": {
+    "learning_rate": 0.0003280178049583653,
+    "hidden_units": 64,
+    "dropout_rate": 0.0,
+    "l2": 0.003087747683585437,
+    "batch_size": 16
+  }
+}
+{
+  "run": 21,
+  "score": 0.4833333333333333,
+  "val_accuracy": 0.5166666666666667,
+  "best_epoch": 0,
+  "checkpoint": "bayes_opt_checkpoints\\run021_lr0.00035_units128_drop0.40_l20.000324_batch128.npz",
+  "hyperparameters": {
+    "learning_rate": 0.00034719246187139293,
+    "hidden_units": 128,
+    "dropout_rate": 0.3983593278370264,
+    "l2": 0.00032449641847036846,
+    "batch_size": 128
+  }
+}
+{
+  "run": 22,
+  "score": 0.85,
+  "val_accuracy": 0.15,
+  "best_epoch": 0,
+  "checkpoint": "bayes_opt_checkpoints\\run022_lr0.00010_units64_drop0.00_l20.000001_batch32.npz",
+  "hyperparameters": {
+    "learning_rate": 0.0001,
+    "hidden_units": 64,
+    "dropout_rate": 0.0,
+    "l2": 1e-06,
+    "batch_size": 32
+  }
+}
+{
+  "run": 23,
+  "score": 0.14166666666666672,
+  "val_accuracy": 0.8583333333333333,
+  "best_epoch": 30,
+  "checkpoint": "bayes_opt_checkpoints\\run023_lr0.00269_units64_drop0.50_l20.000092_batch32.npz",
+  "hyperparameters": {
+    "learning_rate": 0.0026911348355963794,
+    "hidden_units": 64,
+    "dropout_rate": 0.5,
+    "l2": 9.156222190975822e-05,
+    "batch_size": 32
+  }
+}
+{
+  "run": 24,
+  "score": 0.14166666666666672,
+  "val_accuracy": 0.8583333333333333,
+  "best_epoch": 6,
+  "checkpoint": "bayes_opt_checkpoints\\run024_lr0.04017_units64_drop0.47_l20.000005_batch32.npz",
+  "hyperparameters": {
+    "learning_rate": 0.04016811220182881,
+    "hidden_units": 64,
+    "dropout_rate": 0.4746698457069205,
+    "l2": 4.887424994628547e-06,
+    "batch_size": 32
+  }
+}
+{
+  "run": 25,
+  "score": 0.14166666666666672,
+  "val_accuracy": 0.8583333333333333,
+  "best_epoch": 1,
+  "checkpoint": "bayes_opt_checkpoints\\run025_lr0.05012_units64_drop0.00_l20.000043_batch16.npz",
+  "hyperparameters": {
+    "learning_rate": 0.05011872336272722,
+    "hidden_units": 64,
+    "dropout_rate": 0.0,
+    "l2": 4.271312042023924e-05,
+    "batch_size": 16
+  }
+}
+{
+  "run": 26,
+  "score": 0.14166666666666672,
+  "val_accuracy": 0.8583333333333333,
+  "best_epoch": 16,
+  "checkpoint": "bayes_opt_checkpoints\\run026_lr0.00471_units64_drop0.50_l20.000487_batch16.npz",
+  "hyperparameters": {
+    "learning_rate": 0.004709258001639807,
+    "hidden_units": 64,
+    "dropout_rate": 0.5,
+    "l2": 0.0004872875164186527,
+    "batch_size": 16
+  }
+}
+{
+  "run": 27,
+  "score": 0.6583333333333333,
+  "val_accuracy": 0.3416666666666667,
+  "best_epoch": 0,
+  "checkpoint": "bayes_opt_checkpoints\\run027_lr0.00015_units64_drop0.03_l20.001692_batch64.npz",
+  "hyperparameters": {
+    "learning_rate": 0.0001504976939971285,
+    "hidden_units": 64,
+    "dropout_rate": 0.02872149228318322,
+    "l2": 0.0016922389964851693,
+    "batch_size": 64
+  }
+}
+{
+  "run": 28,
+  "score": 0.19166666666666665,
+  "val_accuracy": 0.8083333333333333,
+  "best_epoch": 45,
+  "checkpoint": "bayes_opt_checkpoints\\run028_lr0.00010_units64_drop0.00_l20.000050_batch16.npz",
+  "hyperparameters": {
+    "learning_rate": 0.0001,
+    "hidden_units": 64,
+    "dropout_rate": 0.0,
+    "l2": 4.968731406313103e-05,
+    "batch_size": 16
+  }
+}
+{
+  "run": 29,
+  "score": 0.14166666666666672,
+  "val_accuracy": 0.8583333333333333,
+  "best_epoch": 15,
+  "checkpoint": "bayes_opt_checkpoints\\run029_lr0.00821_units64_drop0.00_l20.000014_batch32.npz",
+  "hyperparameters": {
+    "learning_rate": 0.008209938391315072,
+    "hidden_units": 64,
+    "dropout_rate": 0.0,
+    "l2": 1.4332887161669002e-05,
+    "batch_size": 32
+  }
+}
+{
+  "run": 30,
+  "score": 0.15000000000000002,
+  "val_accuracy": 0.85,
+  "best_epoch": 36,
+  "checkpoint": "bayes_opt_checkpoints\\run030_lr0.00010_units64_drop0.50_l20.000553_batch32.npz",
+  "hyperparameters": {
+    "learning_rate": 0.0001,
+    "hidden_units": 64,
+    "dropout_rate": 0.5,
+    "l2": 0.0005525943195972422,
+    "batch_size": 32
+  }
+}
+{
+  "run": 31,
+  "score": 0.14166666666666672,
+  "val_accuracy": 0.8583333333333333,
+  "best_epoch": 21,
+  "checkpoint": "bayes_opt_checkpoints\\run031_lr0.00501_units128_drop0.02_l20.001019_batch64.npz",
+  "hyperparameters": {
+    "learning_rate": 0.005006982422059071,
+    "hidden_units": 128,
+    "dropout_rate": 0.018522864671048023,
+    "l2": 0.0010188877802373602,
+    "batch_size": 64
+  }
+}
+{
+  "run": 32,
+  "score": 0.125,
+  "val_accuracy": 0.875,
+  "best_epoch": 4,
+  "checkpoint": "bayes_opt_checkpoints\\run032_lr0.00222_units128_drop0.12_l20.000014_batch64.npz",
+  "hyperparameters": {
+    "learning_rate": 0.0022181532083007925,
+    "hidden_units": 128,
+    "dropout_rate": 0.11620826364302622,
+    "l2": 1.443002908187936e-05,
+    "batch_size": 64
+  }
+}
+{
+  "run": 33,
+  "score": 0.8166666666666667,
+  "val_accuracy": 0.18333333333333332,
+  "best_epoch": 4,
+  "checkpoint": "bayes_opt_checkpoints\\run033_lr0.00010_units128_drop0.42_l20.000154_batch64.npz",
+  "hyperparameters": {
+    "learning_rate": 0.0001,
+    "hidden_units": 128,
+    "dropout_rate": 0.4223283653306914,
+    "l2": 0.00015437836222096133,
+    "batch_size": 64
+  }
+}
+{
+  "run": 34,
+  "score": 0.14166666666666672,
+  "val_accuracy": 0.8583333333333333,
+  "best_epoch": 2,
+  "checkpoint": "bayes_opt_checkpoints\\run034_lr0.02578_units128_drop0.00_l20.000024_batch64.npz",
+  "hyperparameters": {
+    "learning_rate": 0.025783790640608113,
+    "hidden_units": 128,
+    "dropout_rate": 0.0,
+    "l2": 2.4426825461886005e-05,
+    "batch_size": 64
+  }
+}
+{
+  "run": 35,
+  "score": 0.15833333333333333,
+  "val_accuracy": 0.8416666666666667,
+  "best_epoch": 6,
+  "checkpoint": "bayes_opt_checkpoints\\run035_lr0.00510_units128_drop0.00_l20.000002_batch64.npz",
+  "hyperparameters": {
+    "learning_rate": 0.005102013050056009,
+    "hidden_units": 128,
+    "dropout_rate": 0.0,
+    "l2": 1.5272321666429081e-06,
+    "batch_size": 64
+  }
+}
+
+Raw optimizer x_opt:
+[-2.65400846e+00  1.28000000e+02  1.16208264e-01 -4.84073279e+00
+  6.40000000e+01]
+Raw optimizer fx_opt:
+0.125
