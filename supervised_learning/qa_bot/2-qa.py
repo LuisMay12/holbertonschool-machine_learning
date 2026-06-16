@@ -60,8 +60,8 @@ def question_answer(question, reference):
     ]
 
     outputs = model(inputs)
-    start = int(tf.argmax(outputs[0][0]))
-    end = int(tf.argmax(outputs[1][0]))
+    start = int(tf.argmax(outputs[0][0][1:]) + 1)
+    end = int(tf.argmax(outputs[1][0][1:]) + 1)
 
     if start == 0 or end == 0 or start > end:
         return None
