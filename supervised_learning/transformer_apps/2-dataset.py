@@ -18,6 +18,7 @@ class Dataset:
         )
         self.data_train = self.data_train.map(self.tf_encode)
         self.data_valid = self.data_valid.map(self.tf_encode)
+        self.data_validate = self.data_valid
 
     def tokenize_dataset(self, data):
         """Create sub-word tokenizers trained from the given dataset."""

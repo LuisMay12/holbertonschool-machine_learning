@@ -45,6 +45,7 @@ class Dataset:
             batch_size,
             padded_shapes=([None], [None])
         )
+        self.data_validate = self.data_valid
 
     def tokenize_dataset(self, data):
         """Create sub-word tokenizers trained from the given dataset."""
