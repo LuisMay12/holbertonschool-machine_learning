@@ -2,7 +2,7 @@
 """Dataset module for machine translation transformer applications."""
 
 import transformers
-import tensorflow_datasets as tfds
+from setup import load_pt2en
 
 
 class Dataset:
@@ -10,42 +10,20 @@ class Dataset:
 
     def __init__(self):
         """Initialize the training/validation data and tokenizers."""
-        self.data_train = tfds.load(
-            'ted_hrlr_translate/pt_to_en',
-            split='train',
-            as_supervised=True
-        )
-        self.data_valid = tfds.load(
-            'ted_hrlr_translate/pt_to_en',
-            split='validation',
-            as_supervised=True
-        )
+        self.data_train = load_pt2en('train')
+        self.data_valid = load_pt2en('validation')
         self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(
             self.data_train
         )
 
     def tokenize_dataset(self, data):
         """Create sub-word tokenizers trained from the given dataset."""
-        try:
-            tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
-                'neuralmind/bert-base-portuguese-cased',
-                local_files_only=True
-            )
-            tokenizer_en = transformers.AutoTokenizer.from_pretrained(
-                'bert-base-uncased',
-                local_files_only=True
-            )
-        except Exception:
-            SubwordTextEncoder = tfds.deprecated.text.SubwordTextEncoder
-            tokenizer_pt = SubwordTextEncoder.build_from_corpus(
-                (pt.numpy() for pt, en in data),
-                target_vocab_size=2 ** 13
-            )
-            tokenizer_en = SubwordTextEncoder.build_from_corpus(
-                (en.numpy() for pt, en in data),
-                target_vocab_size=2 ** 13
-            )
-            return tokenizer_pt, tokenizer_en
+        tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
+            'neuralmind/bert-base-portuguese-cased'
+        )
+        tokenizer_en = transformers.AutoTokenizer.from_pretrained(
+            'bert-base-uncased'
+        )
 
         def get_training_corpus(index):
             """Generate batches of sentences for tokenizer training."""
