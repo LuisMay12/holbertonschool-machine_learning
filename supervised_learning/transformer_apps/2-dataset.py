@@ -3,7 +3,7 @@
 
 import transformers
 import tensorflow as tf
-import tensorflow_datasets as tfds
+from setup import load_pt2en
 
 
 class Dataset:
@@ -11,18 +11,8 @@ class Dataset:
 
     def __init__(self):
         """Initialize the data, tokenizers, and encoded datasets."""
-        self.data_train = tfds.load(
-            'ted_hrlr_translate/pt_to_en',
-            split='train',
-            as_supervised=True,
-            try_gcs=True
-        )
-        self.data_valid = tfds.load(
-            'ted_hrlr_translate/pt_to_en',
-            split='validation',
-            as_supervised=True,
-            try_gcs=True
-        )
+        self.data_train = load_pt2en('train')
+        self.data_valid = load_pt2en('validation')
         self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(
             self.data_train
         )
