@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Play Atari Breakout using a trained Deep Q-learning policy."""
 
+import os
+import time
+
 import tensorflow.keras as tf_keras
 from keras import __version__ as keras_version
 from tensorflow.keras.optimizers.legacy import Adam
@@ -43,4 +46,12 @@ if __name__ == "__main__":
     agent = build_play_agent(model, actions)
 
     agent.load_weights("policy.h5")
-    agent.test(env, nb_episodes=5, visualize=True)
+    episodes = int(os.getenv("PLAY_EPISODES", "5"))
+    delay = float(os.getenv("PLAY_DELAY", "0.03"))
+
+    try:
+        for _ in range(episodes):
+            agent.test(env, nb_episodes=1, visualize=True)
+            time.sleep(delay)
+    finally:
+        env.close()
